@@ -24,8 +24,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('member_id')->index();
             $table->foreign('member_id')->references('id')->on('members');
-            $table->string('membership_type_from')->nullable();
-            $table->string('membership_type_to');
+            $table->string('membership_type');
             $table->timestamps();
         });
     }

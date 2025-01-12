@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,20 +10,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MembershipType;
 
 /**
- * @property MembershipType $membership_type_from
- * @property MembershipType $membership_type_to
+ * @property MembershipType $membership_type
+ * @property-read Member $member
+ * @property-read bool $is_active
  */
 class MembershipHistory extends Model
 {
     use HasFactory, HasUuids;
     protected $fillable = [
-        'membership_type_from',
-        'membership_type_to',
+        'membership_type',
     ];
 
     protected $casts = [
-        'membership_type_from' => MembershipType::class,
-        'membership_type_to' => MembershipType::class,
+        'membership_type' => MembershipType::class,
     ];
 
     public function member(): BelongsTo
@@ -30,9 +30,13 @@ class MembershipHistory extends Model
         return $this->belongsTo(Member::class);
     }
 
-    public function is_active(): bool
+    public function isActive(): Attribute
     {
-        return $this->membership_type_to === MembershipType::Keyholder || $this->membership_type_to === MembershipType::Member;
+        return Attribute::make(
+            get:function () {
+                return $this->membership_type === MembershipType::Keyholder || $this->membership_type === MembershipType::Member;
+            }
+        );
     }
 
 }

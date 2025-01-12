@@ -58,7 +58,9 @@ class Member extends Model
     {
         return Attribute::make(
             get: function () {
-                $latestHistoryEvent = $this->membershipHistory()->latest()->first()->is_active;
+                /** @var MembershipHistory $latestHistoryEvent */
+                $latestHistoryEvent = $this->membershipHistory()->latest()->first();
+                return $latestHistoryEvent->is_active;
             },
             set: function ($value) {
                 if ($value === $this->has_active_membership) {
@@ -67,17 +69,16 @@ class Member extends Model
 
                 if ($value) {
                     $this->membershipHistory()->create([
-                        'membership_type_from' => $this->membership_type,
-                        'membership_type_to' => $this->membership_type === MembershipType::UnpaidKeyholder ? MembershipType::Keyholder : MembershipType::Member,
+                        'membership_type' => $this->membership_type === MembershipType::UnpaidKeyholder ? MembershipType::Keyholder : MembershipType::Member,
                     ]);
                 } else {
                     $this->membershipHistory()->create([
-                        'membership_type_from' => $this->membership_type,
-                        'membership_type_to' => $this->membership_type === MembershipType::Keyholder ? MembershipType::UnpaidKeyholder : MembershipType::UnpaidMember,
+                        'membership_type' => $this->membership_type === MembershipType::Keyholder ? MembershipType::UnpaidKeyholder : MembershipType::UnpaidMember,
                     ]);
                 }
 
                 $this->has_active_membership = $value;
+                $this->save();
             }
         );
     }
@@ -94,7 +95,7 @@ class Member extends Model
     public function membershipType(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->membershipHistory()->latest()->first()->membership_type_to,
+            get: fn() => $this->membershipHistory()->latest()->first()->membership_type,
             set: fn($value) => $this->membershipHistory()->create([
                 'membership_type_from' => $this->membership_type,
                 'membership_type_to' => $value,
