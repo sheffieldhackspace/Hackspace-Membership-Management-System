@@ -16,9 +16,11 @@
         "laravel/tinker": "^2.9",
         "spatie/laravel-model-states": "^2.10",
         "spatie/laravel-permission": "^6.10",
+        "spatie/laravel-typescript-transformer": "^2.5",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^3.5",
         "fakerphp/faker": "^1.23",
         "laravel/breeze": "^2.3",
         "laravel/pail": "^1.1",

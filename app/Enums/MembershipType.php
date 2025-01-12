@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Enums;
+
 enum MembershipType
 {
     case Keyholder;
