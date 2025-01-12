@@ -8,15 +8,15 @@ The system will allow:
 * Members to pay their membership fees
 * Members to view their membership status
 * Members to view their training status
-* Members to sign up for training
+* Members to sign up for and/or request training
 * Administrators to view the membership status of all members
 * Administrators to add and remove members
 * Administrators to view the payment status of all members
 * Administrators to balance bank statements with the membership database
 * Portland Works to view who has access to the building
 * Trainers to view who has signed up for their training sessions
-* Trainers to mark members as having completed training
-
+* Trainers to view who requested training
+* Trainers to mark members as having attended and/or completed training
 
 ## Documentation
  * [User Guide](./documentation/user-guide.md)
