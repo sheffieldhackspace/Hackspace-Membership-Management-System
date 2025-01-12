@@ -78,6 +78,17 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
+    members ||--o| access_control_items : has
+    access_control_items {
+        uuid id PK
+        string member_id FK
+        string key_id
+        string fob_id
+        datetime given_at
+        datetime returned_at
+        datetime created_at
+        datetime updated_at
+    }
     members ||--o{ bank_references : has
     bank_references {
         uuid id PK

@@ -23,4 +23,36 @@ The system will allow:
  * [Database](./documentation/database.md)
 
 ## Development
+The backend is built in Laravel 11 and uses a MySQL database we use the following packages:
+* Laravel Pasport and socialite for authentication.
+* Spatie Permissions for role based access control.
+* Spatie typescript-transformer for typescript support.
 
+The frontend is built in Vue.js 3 and uses inertia for routing. New front end components should be built in typescript not using php and blade.
+
+### Installation
+1. Clone the repository
+2. Run 
+``` shell
+composer install
+npm install
+php artisan migrate --seed
+php artisan key:generate
+php artisan typescript:transform
+```
+
+### Running the application
+4. Run `npm run dev`
+9. Run `php artisan serve`
+
+### Testing
+1. Run `php artisan test`
+
+### Making front end changes
+If you make changes to models or add new DTOs you will need to run `php artian typescript:transform` to update the typescript interfaces.
+
+## Contributing
+A high percentage of quality test coverage is expected for all new code. Please run `php artisan test` before submitting a pull request.
+Front end and back and tests are expected for all new features.
+Please do not be offended if your pull request is rejected for not meeting these standards.
+This is to make it easier for all developers to work on the project in the future.
