@@ -58,15 +58,15 @@ class MembersUpdateControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $member = Member::factory()
-            ->has(MembershipHistory::factory(['membership_type' => MembershipType::Member]))
+            ->has(MembershipHistory::factory(['membership_type' => MembershipType::MEMBER]))
             ->create(['user_id' => $user->id]);
         $this->actingAs($user);
-        $data = ['name' => 'Updated Name', 'membership_type' => MembershipType::Keyholder->value];
+        $data = ['name' => 'Updated Name', 'membership_type' => MembershipType::KEYHOLDER->value];
 
         $response = $this->patch("/members/{$member->id}", $data);
 
         $response->assertStatus(403);
-        $this->assertDatabaseHas('members', ['id' => $member->id, 'membership_type' => MembershipType::Member]);
+        $this->assertDatabaseHas('members', ['id' => $member->id, 'membership_type' => MembershipType::MEMBER]);
     }
 
     public function test_invalid_uuid_returns_404(): void

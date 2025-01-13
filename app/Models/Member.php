@@ -11,9 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
+
 
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $user_id
@@ -30,8 +32,12 @@ use Illuminate\Notifications\Notifiable;
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \App\Models\MembershipHistory|null $oldestMembershipHistory
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
+ * @property-read int|null $permissions_count
  * @property-read \App\Models\PostalAddress|null $postalAddress
  * @property-read \App\Models\EmailAddress|null $primaryEmailAddress
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
+ * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TrusteeHistory> $trusteeHistory
  * @property-read int|null $trustee_history_count
  * @property-read \App\Models\User|null $user
@@ -41,22 +47,29 @@ use Illuminate\Notifications\Notifiable;
  * @method static Builder<static>|Member membershipType(\App\Enums\MembershipType $membershipType)
  * @method static Builder<static>|Member newModelQuery()
  * @method static Builder<static>|Member newQuery()
+ * @method static Builder<static>|Member permission($permissions, $without = false)
  * @method static Builder<static>|Member query()
+ * @method static Builder<static>|Member role($roles, $guard = null, $without = false)
  * @method static Builder<static>|Member whereCreatedAt($value)
  * @method static Builder<static>|Member whereId($value)
  * @method static Builder<static>|Member whereKnownAs($value)
  * @method static Builder<static>|Member whereName($value)
  * @method static Builder<static>|Member whereUpdatedAt($value)
  * @method static Builder<static>|Member whereUserId($value)
+ * @method static Builder<static>|Member withoutPermission($permissions)
+ * @method static Builder<static>|Member withoutRole($roles, $guard = null)
  * @mixin \Eloquent
  */
 class Member extends Model
 {
-    use HasFactory, Notifiable, HasUuids;
+    use HasFactory, Notifiable, HasUuids, HasRoles;
     protected $fillable = [
         'name',
         'known_as',
     ];
+
+    protected $guard_name = 'member';
+
 
     public function membershipHistory(): HasMany
     {
@@ -121,11 +134,11 @@ class Member extends Model
 
         if ($value) {
             $this->membershipHistory()->create([
-                'membership_type' => $currentMembershipType === MembershipType::UnpaidKeyholder ? MembershipType::Keyholder : MembershipType::Member,
+                'membership_type' => $currentMembershipType === MembershipType::UNPAIDKEYHOLDER ? MembershipType::KEYHOLDER : MembershipType::MEMBER,
             ]);
         } else {
             $this->membershipHistory()->create([
-                'membership_type' => $currentMembershipType === MembershipType::Keyholder ? MembershipType::UnpaidKeyholder : MembershipType::UnpaidMember,
+                'membership_type' => $currentMembershipType === MembershipType::KEYHOLDER ? MembershipType::UNPAIDKEYHOLDER : MembershipType::UNPAIDMEMBER,
             ]);
         }
 
@@ -144,7 +157,7 @@ class Member extends Model
     {
         /** @var MembershipHistory $membershipHistory */
         $membershipHistory = $this->latestMembershipHistory;
-        return $membershipHistory->membership_type ?? MembershipType::UnpaidMember;
+        return $membershipHistory->membership_type ?? MembershipType::UNPAIDMEMBER;
 
     }
 

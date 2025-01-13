@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\TrusteeHistoryChangedEvent;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +12,7 @@ use App\Enums\MembershipType;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $member_id
@@ -39,6 +40,11 @@ class TrusteeHistory extends Model
     protected $fillable = [
         'elected_at',
         'resigned_at',
+    ];
+
+    protected $dispatchesEvents = [
+        'created' => TrusteeHistoryChangedEvent::class,
+        'updated' => TrusteeHistoryChangedEvent::class,
     ];
 
     public function member(): BelongsTo

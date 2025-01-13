@@ -50,8 +50,8 @@ class MembersIndexControllerTest extends TestCase
     {
         $this->asAdminUser();
 
-        Member::factory()->has(MembershipHistory::factory(['membership_type' => MembershipType::Member]))->create();
-        Member::factory()->has(MembershipHistory::factory(['membership_type' => MembershipType::Keyholder]))->create();
+        Member::factory()->has(MembershipHistory::factory(['membership_type' => MembershipType::MEMBER]))->create();
+        Member::factory()->has(MembershipHistory::factory(['membership_type' => MembershipType::KEYHOLDER]))->create();
 
         $response = $this->get('/members?membership_type=Keyholder');
 
@@ -59,7 +59,7 @@ class MembersIndexControllerTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->component('Members/Index')
             ->has('members.data', 1)
-            ->where('members.data.0.membershipType', MembershipType::Keyholder)
+            ->where('members.data.0.membershipType', MembershipType::KEYHOLDER)
         );
     }
 

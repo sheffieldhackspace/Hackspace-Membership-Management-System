@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\MembershipHistoryChangedEvent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use App\Enums\MembershipType;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $member_id
@@ -41,6 +42,11 @@ class MembershipHistory extends Model
         'membership_type' => MembershipType::class,
     ];
 
+    protected $dispatchesEvents = [
+        'created' => MembershipHistoryChangedEvent::class,
+        'updated' => MembershipHistoryChangedEvent::class,
+    ];
+
     public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class);
@@ -48,14 +54,14 @@ class MembershipHistory extends Model
 
     public function getIsActive(): bool
     {
-            return $this->membership_type === MembershipType::Keyholder || $this->membership_type === MembershipType::Member;
+            return $this->membership_type === MembershipType::KEYHOLDER || $this->membership_type === MembershipType::MEMBER;
     }
 
     public function scopeIsActive(Builder $query): Builder
     {
         return $query->where(fn (Builder|MembershipHistory $query) => $query
-            ->where('membership_type', MembershipType::Keyholder)
-            ->orWhere('membership_type', MembershipType::Member)
+            ->where('membership_type', MembershipType::KEYHOLDER)
+            ->orWhere('membership_type', MembershipType::MEMBER)
         );
     }
 }
