@@ -23,11 +23,13 @@ class MemberSeeder extends Seeder
             return;
         }
 
-        Member::factory(50)
-            ->has(MembershipHistory::factory())
-            ->has(PostalAddress::factory())
-            ->has(EmailAddress::factory()->primary())
-            ->has(EmailAddress::factory()->count(rand(0,2)))
-            ->create();
+        for($i = 0; $i < 50; $i++) {
+            Member::factory()
+                ->has(MembershipHistory::factory())
+                ->has(PostalAddress::factory())
+                ->has(EmailAddress::factory()->primary())
+                ->has(EmailAddress::factory()->count(rand(0, 2)))
+                ->create();
+        }
     }
 }

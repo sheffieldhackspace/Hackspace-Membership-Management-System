@@ -114,8 +114,8 @@ erDiagram
     trustee_histories {
         uuid id PK
         string member_id FK
-        string date_elected
-        string date_resigned
+        datetime elected_at
+        datetime resigned_at
         datetime created_at
         datetime updated_at
     }

@@ -6,6 +6,9 @@ use App\Models\PostalAddress;
 use Faker\Provider\en_GB\Address;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PostalAddress>
+ */
 class PostalAddressFactory extends Factory
 {
     protected $model = PostalAddress::class;

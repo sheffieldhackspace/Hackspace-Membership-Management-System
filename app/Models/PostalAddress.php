@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property string $line_1
  * @property string|null $line_2
  * @property string|null $line_3
- * @property string $city
+ * @property string|null $city
  * @property string|null $county
  * @property string $postcode
  * @property \Illuminate\Support\Carbon|null $created_at

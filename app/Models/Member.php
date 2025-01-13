@@ -24,6 +24,7 @@ use Illuminate\Notifications\Notifiable;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EmailAddress> $emailAddresses
  * @property-read int|null $email_addresses_count
  * @property-read \App\Models\MembershipHistory|null $latestMembershipHistory
+ * @property-read \App\Models\TrusteeHistory|null $latestTrusteeHistory
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MembershipHistory> $membershipHistory
  * @property-read int|null $membership_history_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
@@ -31,9 +32,12 @@ use Illuminate\Notifications\Notifiable;
  * @property-read \App\Models\MembershipHistory|null $oldestMembershipHistory
  * @property-read \App\Models\PostalAddress|null $postalAddress
  * @property-read \App\Models\EmailAddress|null $primaryEmailAddress
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TrusteeHistory> $trusteeHistory
+ * @property-read int|null $trustee_history_count
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\MemberFactory factory($count = null, $state = [])
  * @method static Builder<static>|Member hasActiveMembership()
+ * @method static Builder<static>|Member isTrustee()
  * @method static Builder<static>|Member membershipType(\App\Enums\MembershipType $membershipType)
  * @method static Builder<static>|Member newModelQuery()
  * @method static Builder<static>|Member newQuery()
@@ -67,6 +71,16 @@ class Member extends Model
     public function oldestMembershipHistory(): HasOne
     {
         return $this->hasOne(MembershipHistory::class)->oldestOfMany();
+    }
+
+    public function trusteeHistory(): HasMany
+    {
+        return $this->hasMany(TrusteeHistory::class)->latest();
+    }
+
+    public function latestTrusteeHistory(): HasOne
+    {
+        return $this->hasOne(TrusteeHistory::class)->latestOfMany();
     }
 
     public function user(): HasOne
@@ -160,6 +174,17 @@ class Member extends Model
             'created_at' => $value->toDateTimeString(),
             'updated_at' => $value->toDateTimeString(),
         ]);
+    }
+
+    public function getIsTrustee(): bool
+    {
+        $latestTrusteeHistory = $this->latestTrusteeHistory;
+        return $latestTrusteeHistory?->isTrustee()->exists() ?? false;
+    }
+
+    public function scopeIsTrustee(Builder $query): Builder
+    {
+        return $query->whereHas('latestTrusteeHistory', fn(Builder|TrusteeHistory $query) => $query->isTrustee());
     }
 
 

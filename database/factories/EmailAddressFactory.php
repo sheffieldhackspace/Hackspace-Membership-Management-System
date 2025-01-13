@@ -5,6 +5,9 @@ namespace Database\Factories;
 use App\Models\EmailAddress;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EmailAddress>
+ */
 class EmailAddressFactory extends Factory
 {
     protected $model = EmailAddress::class;
