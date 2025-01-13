@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Members;
 
 use App\Data\MemberData;
 use App\Enums\MembershipType;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Members\MembersFilterRequest;
 use App\Models\Member;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\LaravelData\PaginatedDataCollection;
 
-class Members extends Controller
+class MembersIndexController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,8 +20,6 @@ class Members extends Controller
     {
         $membershipTypes = MembershipType::cases();
         $validated = $request->validated();
-
-//        dd($request);
 
         return Inertia::render('Members/Index', [
             'members' => MemberData::collect(Member::orderBy('name', 'asc')
@@ -36,37 +35,5 @@ class Members extends Controller
             ],
         ]);
 
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Member $member)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Member $member)
-    {
-        //
     }
 }

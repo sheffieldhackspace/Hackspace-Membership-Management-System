@@ -72,9 +72,8 @@ class Member extends Model
 
     public function getHasActiveMembership(): bool
     {
-        /** @var MembershipHistory $latestHistoryEvent */
-        $latestHistoryEvent = $this->latestMembershipHistory()->first();
-        return $latestHistoryEvent->getIsActive();
+        $latestHistoryEvent = $this->latestMembershipHistory;
+        return $latestHistoryEvent?->getIsActive() ?? false;
 
     }
 

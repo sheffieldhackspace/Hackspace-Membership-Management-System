@@ -18,12 +18,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/members', [Members::class, 'index'])->name('members.index');
-    Route::get('/members/create', [Members::class, 'create'])->name('members.create');
-    Route::post('/members', [Members::class, 'store'])->name('members.store');
-    Route::get('/members/{member}/edit', [Members::class, 'edit'])->name('members.edit');
-    Route::patch('/members/{member}', [Members::class, 'update'])->name('members.update');
-
+    Route::get('/members', [Members\MembersIndexController::class, 'index'])->name('members.index');
+    Route::get('/members/create', [Members\MembersCreateController::class, 'create'])->name('members.create');
+    Route::get('/members/{member}/edit', [Members\MembersEditController::class, 'edit'])->name('members.edit');
+    Route::get('/members/{member}', [Members\MembersShowController::class, 'show'])->name('members.show');
+    Route::post('/members', [Members\MembersStoreController::class, 'store'])->name('members.store');
+    Route::patch('/members/{member}', [Members\MembersUpdateController::class, 'update'])->name('members.update');
 });
 
 
