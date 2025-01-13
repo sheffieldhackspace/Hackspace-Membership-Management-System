@@ -21,22 +21,25 @@ use Illuminate\Notifications\Notifiable;
  * @property string $known_as
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\MembershipHistory|null $latestMembershipHistory
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MembershipHistory> $membershipHistory
  * @property-read int|null $membership_history_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \App\Models\MembershipHistory|null $oldestMembershipHistory
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\MemberFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Member hasActiveMembership()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Member newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Member newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Member query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Member whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Member whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Member whereKnownAs($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Member whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Member whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Member whereUserId($value)
+ * @method static Builder<static>|Member hasActiveMembership()
+ * @method static Builder<static>|Member membershipType(\App\Enums\MembershipType $membershipType)
+ * @method static Builder<static>|Member newModelQuery()
+ * @method static Builder<static>|Member newQuery()
+ * @method static Builder<static>|Member query()
+ * @method static Builder<static>|Member whereCreatedAt($value)
+ * @method static Builder<static>|Member whereId($value)
+ * @method static Builder<static>|Member whereKnownAs($value)
+ * @method static Builder<static>|Member whereName($value)
+ * @method static Builder<static>|Member whereUpdatedAt($value)
+ * @method static Builder<static>|Member whereUserId($value)
  * @mixin \Eloquent
  */
 class Member extends Model
@@ -57,6 +60,11 @@ class Member extends Model
         return $this->hasOne(MembershipHistory::class)->latestOfMany();
     }
 
+    public function oldestMembershipHistory(): HasOne
+    {
+        return $this->hasOne(MembershipHistory::class)->oldestOfMany();
+    }
+
     public function user(): HasOne|User
     {
         return $this->hasOne(User::class);
@@ -66,40 +74,43 @@ class Member extends Model
     {
         /** @var MembershipHistory $latestHistoryEvent */
         $latestHistoryEvent = $this->latestMembershipHistory()->first();
-        return $latestHistoryEvent?->is_active ?? false;
+        return $latestHistoryEvent->getIsActive();
 
     }
 
     public function setActiveMembership($value): void
     {
-        if ($value === $this->has_active_membership) {
+        if ($value === $this->getHasActiveMembership()) {
             return;
         }
 
+        $currentMembershipType = $this->getMembershipType();
+
         if ($value) {
             $this->membershipHistory()->create([
-                'membership_type' => $this->membership_type === MembershipType::UnpaidKeyholder ? MembershipType::Keyholder : MembershipType::Member,
+                'membership_type' => $currentMembershipType === MembershipType::UnpaidKeyholder ? MembershipType::Keyholder : MembershipType::Member,
             ]);
         } else {
             $this->membershipHistory()->create([
-                'membership_type' => $this->membership_type === MembershipType::Keyholder ? MembershipType::UnpaidKeyholder : MembershipType::UnpaidMember,
+                'membership_type' => $currentMembershipType === MembershipType::Keyholder ? MembershipType::UnpaidKeyholder : MembershipType::UnpaidMember,
             ]);
         }
 
-        $this->has_active_membership = $value;
         $this->save();
     }
 
     public function scopeHasActiveMembership(Builder|Member $query): Builder
     {
-        return $query->latestMembershipHistory()->first()->isActive();
+        return $query->whereHas('latestMembershipHistory',
+            fn(Builder|MembershipHistory $query) => $query->isActive()
+        );
     }
 
 
     public function getMembershipType(): MembershipType
     {
         /** @var MembershipHistory $membershipHistory */
-        $membershipHistory = $this->latestMembershipHistory()->first();
+        $membershipHistory = $this->latestMembershipHistory;
         return $membershipHistory->membership_type ?? MembershipType::UnpaidMember;
 
     }
@@ -118,17 +129,15 @@ class Member extends Model
 
     public function getJoiningDate(): ?Carbon
     {
-        $membershipHistory = $this->membershipHistory()->oldest()->first();
-
-        if($membershipHistory) {
-            return Carbon::make($membershipHistory->created_at);
+        if($this->oldestMembershipHistory) {
+            return Carbon::make($this->oldestMembershipHistory->created_at);
         }
         return null;
     }
 
     public function setJoiningDate(Carbon $value): void
     {
-        $this->membershipHistory()->oldest()->first()->update([
+        $this->oldestMembershipHistory->update([
             'created_at' => $value->toDateTimeString(),
             'updated_at' => $value->toDateTimeString(),
         ]);
