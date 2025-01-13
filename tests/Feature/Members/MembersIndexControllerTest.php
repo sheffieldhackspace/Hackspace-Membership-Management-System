@@ -25,7 +25,7 @@ class MembersIndexControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
             ->component('Members/Index')
-            ->has('members.data', 3)
+            ->has('members.data', 4)
         );
     }
 
@@ -51,15 +51,15 @@ class MembersIndexControllerTest extends TestCase
         $this->asAdminUser();
 
         Member::factory()->has(MembershipHistory::factory(['membership_type' => MembershipType::MEMBER]))->create();
-        Member::factory()->has(MembershipHistory::factory(['membership_type' => MembershipType::KEYHOLDER]))->create();
+        Member::factory()->has(MembershipHistory::factory(['membership_type' => MembershipType::UNPAIDMEMBER]))->create();
 
-        $response = $this->get('/members?membership_type=Keyholder');
+        $response = $this->get('/members?membership_type=unpaid-member');
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
             ->component('Members/Index')
             ->has('members.data', 1)
-            ->where('members.data.0.membershipType', MembershipType::KEYHOLDER)
+            ->where('members.data.0.membershipType', MembershipType::UNPAIDMEMBER)
         );
     }
 
