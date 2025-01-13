@@ -2,10 +2,10 @@
 
 namespace App\Enums;
 
-enum MembershipType
+enum MembershipType: string
 {
-    case Keyholder;
-    case Member;
-    case UnpaidMember;
-    case UnpaidKeyholder;
+    case Keyholder = 'Keyholder';
+    case Member = 'Member';
+    case UnpaidMember = 'Unpaid Member';
+    case UnpaidKeyholder = 'Unpaid Keyholder';
 }

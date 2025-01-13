@@ -55,7 +55,6 @@ You should also run `php artisan ide-helper:models -RW` to update the phpdoc blo
 ### Making front end changes
 If you make changes to models or add new DTOs you will need to run `php artian typescript:transform` to update the typescript interfaces.
 
-
 ## Contributing
 A high percentage of quality test coverage is expected for all new code. Please run `php artisan test` before submitting a pull request.
 Front end and back and tests are expected for all new features.

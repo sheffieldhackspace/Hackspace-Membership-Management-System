@@ -4,16 +4,16 @@ namespace App\Models;
 
 use App\Enums\MembershipType;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $user_id
@@ -21,15 +21,13 @@ use Illuminate\Notifications\Notifiable;
  * @property string $known_as
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property bool $has_active_membership
- * @property Carbon $joining_date
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MembershipHistory> $membershipHistory
  * @property-read int|null $membership_history_count
- * @property MembershipType $membership_type
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\MemberFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Member hasActiveMembership()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Member newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Member newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Member query()
@@ -47,99 +45,93 @@ class Member extends Model
     protected $fillable = [
         'name',
         'known_as',
-        'membership_type',
-        'has_active_membership',
-    ];
-
-    protected $attributes = [
-        'has_active_membership' => false,
-        'membership_type' => MembershipType::UnpaidMember,
     ];
 
     public function membershipHistory(): HasMany
     {
-        return $this->hasMany(MembershipHistory::class);
+        return $this->hasMany(MembershipHistory::class)->latest();
     }
 
-    public function user(): HasOne
+    public function latestMembershipHistory(): HasOne
+    {
+        return $this->hasOne(MembershipHistory::class)->latestOfMany();
+    }
+
+    public function user(): HasOne|User
     {
         return $this->hasOne(User::class);
     }
 
-    /**
-     * @return Attribute
-     * Provides the has_active_membership attribute for the model
-     * This attribute is a boolean that is true if the member has an active membership and false otherwise.
-     *
-     * The attribute can be written to to change the membership status of the member.
-     * Keyholders will become unpaid keyholders, members will become unpaid members and vice versa.
-     */
-    protected function hasActiveMembership(): Attribute
+    public function getHasActiveMembership(): bool
     {
-        return Attribute::make(
-            get: function (): bool {
-                /** @var MembershipHistory $latestHistoryEvent */
-                $latestHistoryEvent = $this->membershipHistory()->latest()->first();
-                return $latestHistoryEvent->is_active;
-            },
-            set: function ($value): void {
-                if ($value === $this->has_active_membership) {
-                    return;
-                }
+        /** @var MembershipHistory $latestHistoryEvent */
+        $latestHistoryEvent = $this->latestMembershipHistory()->first();
+        return $latestHistoryEvent?->is_active ?? false;
 
-                if ($value) {
-                    $this->membershipHistory()->create([
-                        'membership_type' => $this->membership_type === MembershipType::UnpaidKeyholder ? MembershipType::Keyholder : MembershipType::Member,
-                    ]);
-                } else {
-                    $this->membershipHistory()->create([
-                        'membership_type' => $this->membership_type === MembershipType::Keyholder ? MembershipType::UnpaidKeyholder : MembershipType::UnpaidMember,
-                    ]);
-                }
-
-                $this->has_active_membership = $value;
-                $this->save();
-            }
-        );
     }
 
-    /**
-     * @return Attribute
-     *
-     * Provides the membership_type attribute for the model
-     * This attribute is a MembershipType enum that represents the current membership status of the member.
-     *
-     * The attribute can be written to to change the membership status of the member.
-     * The membership status will be recorded in the membership history.
-     */
-    public function membershipType(): Attribute
+    public function setActiveMembership($value): void
     {
-        return Attribute::make(
-            get: fn(): MembershipType => $this->membershipHistory()->latest()->first()->membership_type,
-            set: fn($value) => $this->membershipHistory()->create([
-                'membership_type_from' => $this->membership_type,
-                'membership_type_to' => $value,
-            ])
-        );
+        if ($value === $this->has_active_membership) {
+            return;
+        }
+
+        if ($value) {
+            $this->membershipHistory()->create([
+                'membership_type' => $this->membership_type === MembershipType::UnpaidKeyholder ? MembershipType::Keyholder : MembershipType::Member,
+            ]);
+        } else {
+            $this->membershipHistory()->create([
+                'membership_type' => $this->membership_type === MembershipType::Keyholder ? MembershipType::UnpaidKeyholder : MembershipType::UnpaidMember,
+            ]);
+        }
+
+        $this->has_active_membership = $value;
+        $this->save();
     }
 
-    /**
-     * @return Attribute
-     *
-     * Provides the joining_date attribute for the model
-     * This attribute is a Carbon Date that represents when the member joined the space.
-     *
-     * The attribute can be written to to change the date of the first membership history entry.
-     */
-    public function joiningDate(): Attribute
+    public function scopeHasActiveMembership(Builder|Member $query): Builder
     {
-        return Attribute::make(
-            get: fn(): Carbon => Carbon::make($this->membershipHistory()->oldest()->first()->created_at),
-            set: fn(Carbon $value) => $this->membershipHistory()->oldest()->first()->update([
-                'created_at' => $value->toDateTimeString(),
-                'updated_at' => $value->toDateTimeString(),
-            ])
-        );
+        return $query->latestMembershipHistory()->first()->isActive();
+    }
+
+
+    public function getMembershipType(): MembershipType
+    {
+        /** @var MembershipHistory $membershipHistory */
+        $membershipHistory = $this->latestMembershipHistory()->first();
+        return $membershipHistory->membership_type ?? MembershipType::UnpaidMember;
+
+    }
+
+    public function setMembershipType($value): void
+    {
+        $this->membershipHistory()->create([
+            'membership_type' => $value,
+        ]);
+    }
+
+    public function scopeMembershipType(Builder $query, MembershipType $membershipType): Builder
+    {
+        return $query->whereRelation('latestMembershipHistory', 'membership_type', '=', $membershipType->value);
+    }
+
+    public function getJoiningDate(): ?Carbon
+    {
+        $membershipHistory = $this->membershipHistory()->oldest()->first();
+
+        if($membershipHistory) {
+            return Carbon::make($membershipHistory->created_at);
+        }
+        return null;
+    }
+
+    public function setJoiningDate(Carbon $value): void
+    {
+        $this->membershipHistory()->oldest()->first()->update([
+            'created_at' => $value->toDateTimeString(),
+            'updated_at' => $value->toDateTimeString(),
+        ]);
     }
 
 
