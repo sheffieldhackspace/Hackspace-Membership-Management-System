@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Notifications\Notifiable;
 
 /**
- *
+ * 
  *
  * @property string $id
  * @property string|null $user_id
@@ -21,12 +21,16 @@ use Illuminate\Notifications\Notifiable;
  * @property string $known_as
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EmailAddress> $emailAddresses
+ * @property-read int|null $email_addresses_count
  * @property-read \App\Models\MembershipHistory|null $latestMembershipHistory
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MembershipHistory> $membershipHistory
  * @property-read int|null $membership_history_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \App\Models\MembershipHistory|null $oldestMembershipHistory
+ * @property-read \App\Models\PostalAddress|null $postalAddress
+ * @property-read \App\Models\EmailAddress|null $primaryEmailAddress
  * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\MemberFactory factory($count = null, $state = [])
  * @method static Builder<static>|Member hasActiveMembership()
@@ -65,10 +69,26 @@ class Member extends Model
         return $this->hasOne(MembershipHistory::class)->oldestOfMany();
     }
 
-    public function user(): HasOne|User
+    public function user(): HasOne
     {
         return $this->hasOne(User::class);
     }
+
+    public function emailAddresses(): HasMany
+    {
+        return $this->hasMany(EmailAddress::class);
+    }
+
+    public function primaryEmailAddress(): HasOne
+    {
+        return $this->hasOne(EmailAddress::class)->isPrimary();
+    }
+
+    public function postalAddress(): HasOne
+    {
+        return $this->hasOne(PostalAddress::class);
+    }
+
 
     public function getHasActiveMembership(): bool
     {

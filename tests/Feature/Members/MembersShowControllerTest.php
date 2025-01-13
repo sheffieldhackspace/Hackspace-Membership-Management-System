@@ -44,7 +44,7 @@ class MembersShowControllerTest extends TestCase
     public function test_it_shows_member_details_if_user_is_associated(): void
     {
         $user = User::factory()->create();
-        /** @var $member Member */
+        /** @var Member $member */
         $member = Member::factory()->create(['user_id' => $user->id]);
         $this->actingAs($user);
 
@@ -62,7 +62,7 @@ class MembersShowControllerTest extends TestCase
     public function test_it_shows_member_details_if_user_is_admin(): void
     {
         $this->asAdminUser();
-        /** @var $member Member */
+        /** @var Member $member */
         $member = Member::factory()->create();
 
         $response = $this->get("/members/{$member->id}");
