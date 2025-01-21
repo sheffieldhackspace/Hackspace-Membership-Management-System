@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Enums\MembershipType;
+use App\Enums\RolesEnum;
 use App\Models\EmailAddress;
 use App\Models\Member;
 use App\Models\MembershipHistory;
@@ -33,6 +34,17 @@ abstract class TestCase extends BaseTestCase
                 ->isTrustee()
             )->create();
         $this->actingAs($user);
+
+        return $user;
+    }
+
+    public function asPWUser(): User
+    {
+        $user = User::factory()
+            ->create();
+        $this->actingAs($user);
+
+        $user->assignRole(RolesEnum::PWUSER);
 
         return $user;
     }
