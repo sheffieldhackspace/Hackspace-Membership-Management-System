@@ -1,5 +1,5 @@
 <template>
-    <Head title="View {{ member.name }}" />
+    <Head title="View Member Details" />
 
     <AuthenticatedLayout>
         <template #header>
