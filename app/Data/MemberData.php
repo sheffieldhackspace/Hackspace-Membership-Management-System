@@ -23,7 +23,7 @@ class MemberData extends Data
             id: $member->id,
             name: $member->name,
             knownAs: $member->known_as,
-            membershipType: $member->getMembershipType()->value,
+            membershipType: $member->getMembershipType()->label(),
             hasActiveMembership: $member->getHasActiveMembership(),
             joiningDate: $member->getJoiningDate() ? $member->getJoiningDate()->toDateString() : null,
         );

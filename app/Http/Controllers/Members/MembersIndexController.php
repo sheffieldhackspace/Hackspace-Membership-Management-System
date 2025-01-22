@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Members;
 
 use App\Data\MemberData;
+use App\Data\MembershipTypeData;
 use App\Enums\MembershipType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Members\MembersFilterRequest;
@@ -28,7 +29,7 @@ class MembersIndexController extends Controller
                 ->paginate(25)
                 ->appends($request->except('page')
                 ), PaginatedDataCollection::class),
-            'membershipTypes' => $membershipTypes,
+            'membershipTypes' => MembershipTypeData::getAll(),
             'filters' => [
                 'search' => $validated['search'] ?? null,
                 'membershipType' => $validated['membership_type'] ?? null,

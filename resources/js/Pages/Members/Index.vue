@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import MemberData = App.Data.MemberData;
+import MembershipTypeData = App.Data.MembershipTypeData;
 
 const props = defineProps<{
     members: {
@@ -13,7 +14,7 @@ const props = defineProps<{
             active: boolean;
         }[];
     };
-    membershipTypes: string[];
+    membershipTypes: MembershipTypeData[];
     filters: {
         search?: string;
         membershipType?: string;
@@ -53,7 +54,7 @@ const filterMembers = () => {
                             class="border border-gray-300 rounded-md p-2 pr-10"
                         >
                             <option value="">All Membership Types</option>
-                            <option v-for="type in membershipTypes" :key="type" :value="type">{{ type }}</option>
+                            <option v-for="type in membershipTypes" :key="type.label" :value="type.value">{{ type.label }}</option>
                         </select>
                         <button @click="filterMembers" class="bg-brand text-white rounded-md p-2 ">Search</button>
                     </div>

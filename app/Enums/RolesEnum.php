@@ -9,6 +9,8 @@ enum RolesEnum: string
     case KEYHOLDER = 'keyholder';
     case TOOLTRAINER = 'tool-trainer';
     case ADMIN = 'admin';
+
+    case USER = 'user';
     case PWUSER = 'pw-user';
 
     public function label(): string
@@ -18,6 +20,7 @@ enum RolesEnum: string
             RolesEnum::KEYHOLDER => 'Keyholder',
             RolesEnum::TOOLTRAINER => 'Tool Trainer',
             RolesEnum::ADMIN => 'Admin',
+            RolesEnum::USER => 'User',
             RolesEnum::PWUSER => 'Portland Works User',
         };
     }

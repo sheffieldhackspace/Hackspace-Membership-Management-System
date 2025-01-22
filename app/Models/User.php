@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Events\TrusteeHistoryChangedEvent;
+use App\Events\UserCreatedEvent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -84,6 +85,10 @@ class User extends Authenticatable
     }
 
     protected $guard_name = 'web';
+
+    protected $dispatchesEvents = [
+        'created' => UserCreatedEvent::class,
+    ];
 
     public function member(): HasMany
     {
