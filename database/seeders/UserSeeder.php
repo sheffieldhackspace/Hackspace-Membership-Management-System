@@ -25,7 +25,6 @@ class UserSeeder extends Seeder
 
         User::factory()
             ->has(Member::factory()
-                ->has(MembershipHistory::factory())
                 ->has(PostalAddress::factory())
                 ->has(EmailAddress::factory()->primary())
                 ->has(EmailAddress::factory()->count(rand(0, 2)))
