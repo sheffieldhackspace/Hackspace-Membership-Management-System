@@ -3,16 +3,12 @@
 namespace App\Http\Controllers\Members;
 
 use App\Data\MemberData;
-use App\Data\MembershipTypeData;
-use App\Enums\MembershipType;
 use App\Enums\PermissionEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Members\MembersFilterRequest;
 use App\Models\Member;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Spatie\LaravelData\PaginatedDataCollection;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 
 class MembersShowController extends Controller

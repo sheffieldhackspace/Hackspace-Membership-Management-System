@@ -54,7 +54,7 @@ const filterMembers = () => {
                             class="border border-gray-300 rounded-md p-2 pr-10"
                         >
                             <option value="">All Membership Types</option>
-                            <option v-for="type in membershipTypes" :key="type.label" :value="type.value">{{ type.label }}</option>
+                            <option v-for="type in membershipTypes" :key="type.label" :value="type.value" >{{ type.label }}</option>
                         </select>
                         <button @click="filterMembers" class="bg-brand text-white rounded-md p-2 ">Search</button>
                     </div>

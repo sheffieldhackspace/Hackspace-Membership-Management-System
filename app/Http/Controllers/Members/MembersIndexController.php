@@ -19,6 +19,7 @@ class MembersIndexController extends Controller
      */
     public function index(MembersFilterRequest $request)
     {
+
         return Inertia::render('Members/Index', [
             'members' => MemberData::collect(Member::orderBy('name', 'asc')
                 ->when($request->get('search'), fn($query, string $search) => $query->where('name', 'like', "%$search%")->orWhere('known_as', 'like', "%$search%"))
@@ -28,8 +29,8 @@ class MembersIndexController extends Controller
                 ), PaginatedDataCollection::class),
             'membershipTypes' => MembershipTypeData::getAll(),
             'filters' => [
-                'search' => $validated['search'] ?? null,
-                'membershipType' => $validated['membership_type'] ?? null,
+                'search' => $request->get('search') ?? null,
+                'membershipType' => $request->get('membership_type') ?? null,
             ],
         ]);
 
