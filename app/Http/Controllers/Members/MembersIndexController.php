@@ -19,9 +19,6 @@ class MembersIndexController extends Controller
      */
     public function index(MembersFilterRequest $request)
     {
-        $membershipTypes = MembershipType::cases();
-        $validated = $request->validated();
-
         return Inertia::render('Members/Index', [
             'members' => MemberData::collect(Member::orderBy('name', 'asc')
                 ->when($request->get('search'), fn($query, string $search) => $query->where('name', 'like', "%$search%")->orWhere('known_as', 'like', "%$search%"))

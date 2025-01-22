@@ -35,7 +35,7 @@ class RoleMiddleware
             ? $role
             : explode('|', $role);
 
-        $members = $user->member->filter(function (Member $member) use ($roles) {
+        $members = $user->members->filter(function (Member $member) use ($roles) {
             return $member->hasAnyRole($roles);
         });
 

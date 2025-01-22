@@ -11,7 +11,7 @@ use App\Enums\MembershipType;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- *
+ * 
  *
  * @property string $id
  * @property string $member_id

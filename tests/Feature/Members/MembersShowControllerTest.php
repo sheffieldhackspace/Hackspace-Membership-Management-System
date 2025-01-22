@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Members;
 
+use App\Enums\MembershipType;
 use App\Models\Member;
+use App\Models\MembershipHistory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -19,7 +21,7 @@ class MembersShowControllerTest extends TestCase
 
         $member = Member::factory()->create();
 
-        $response = $this->get("/members/{$member->id}");
+        $response = $this->get("/member/{$member->id}");
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
@@ -36,7 +38,7 @@ class MembersShowControllerTest extends TestCase
 
         $member = Member::factory()->create();
 
-        $response = $this->get("/members/{$member->id}");
+        $response = $this->get("/member/{$member->id}");
 
         $response->assertStatus(403);
     }
@@ -45,10 +47,12 @@ class MembersShowControllerTest extends TestCase
     {
         $user = User::factory()->create();
         /** @var Member $member */
-        $member = Member::factory()->create(['user_id' => $user->id]);
+        $member = Member::factory()
+            ->has(MembershipHistory::factory(['membership_type' => MembershipType::MEMBER]))
+            ->create(['user_id' => $user->id]);
         $this->actingAs($user);
 
-        $response = $this->get("/members/{$member->id}");
+        $response = $this->get("/member/{$member->id}");
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
@@ -65,7 +69,7 @@ class MembersShowControllerTest extends TestCase
         /** @var Member $member */
         $member = Member::factory()->create();
 
-        $response = $this->get("/members/{$member->id}");
+        $response = $this->get("/member/{$member->id}");
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
@@ -81,7 +85,7 @@ class MembersShowControllerTest extends TestCase
 
         $invalidUuid = 'invalid-uuid';
 
-        $response = $this->get("/members/{$invalidUuid}");
+        $response = $this->get("/member/{$invalidUuid}");
 
         $response->assertStatus(404);
     }

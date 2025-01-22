@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\MembershipType;
+use App\Events\MemberCreatedEvent;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -70,6 +71,9 @@ class Member extends Model
 
     protected $guard_name = 'member';
 
+    protected $dispatchesEvents = [
+        'created' => MemberCreatedEvent::class,
+    ];
 
     public function membershipHistory(): HasMany
     {

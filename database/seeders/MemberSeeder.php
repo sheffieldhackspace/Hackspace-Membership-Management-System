@@ -25,7 +25,6 @@ class MemberSeeder extends Seeder
 
         for($i = 0; $i < 50; $i++) {
             Member::factory()
-                ->has(MembershipHistory::factory())
                 ->has(PostalAddress::factory())
                 ->has(EmailAddress::factory()->primary())
                 ->has(EmailAddress::factory()->count(rand(0, 2)))

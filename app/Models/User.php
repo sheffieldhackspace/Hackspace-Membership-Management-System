@@ -21,8 +21,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Member> $member
- * @property-read int|null $member_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Member> $members
+ * @property-read int|null $members_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
@@ -90,8 +90,18 @@ class User extends Authenticatable
         'created' => UserCreatedEvent::class,
     ];
 
-    public function member(): HasMany
+    public function members(): HasMany
     {
         return $this->hasMany(Member::class);
+    }
+
+    public function membersHavePermission(string $permission): bool
+    {
+        return $this->members->contains(fn (Member $member) => $member->hasPermissionTo($permission));
+    }
+
+    public function membersHaveRole(string $role): bool
+    {
+        return $this->members->contains(fn (Member $member) => $member->hasRole($role));
     }
 }

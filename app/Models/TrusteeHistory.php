@@ -12,12 +12,12 @@ use App\Enums\MembershipType;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- *
+ * 
  *
  * @property string $id
  * @property string $member_id
- * @property string|null $elected_at
- * @property string|null $resigned_at
+ * @property \Illuminate\Support\Carbon|null $elected_at
+ * @property \Illuminate\Support\Carbon|null $resigned_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Member $member
@@ -45,6 +45,11 @@ class TrusteeHistory extends Model
     protected $dispatchesEvents = [
         'created' => TrusteeHistoryChangedEvent::class,
         'updated' => TrusteeHistoryChangedEvent::class,
+    ];
+
+    protected $casts = [
+        'elected_at' => 'datetime',
+        'resigned_at' => 'datetime',
     ];
 
     public function member(): BelongsTo

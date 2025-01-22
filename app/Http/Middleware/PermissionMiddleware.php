@@ -35,11 +35,11 @@ class PermissionMiddleware
             ? $permission
             : explode('|', $permission);
 
-        $members = $user->member->filter(function (Member $member) use ($permissions) {
+        $members = $user->members->filter(function (Member $member) use ($permissions) {
             return $member->hasAnyPermission($permissions);
         });
 
-        if (! $user->canAny($permissions) && $members->isEmpty()) {
+        if (! $user->hasAnyPermission($permissions) && $members->isEmpty()) {
             throw UnauthorizedException::forPermissions($permissions);
         }
 

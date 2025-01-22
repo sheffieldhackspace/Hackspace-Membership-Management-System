@@ -71,8 +71,8 @@ const filterMembers = () => {
                             <div class="col-span-2 text-sm text-gray-900 pt-3 flex items-center">{{ member.membershipType }}</div>
                             <div class="col-span-2 text-sm text-gray-900 pt-3 flex items-center">{{ member.hasActiveMembership ? 'Yes' : 'No' }}</div>
                             <div class="col-span-2 pt-3 pr-4 justify-self-stretch content-end">
-                                <button :href="`/members/${member.id}`" class="bg-gray-700 text-white rounded-md p-2 mr-2">View</button>
-                                <button :href="`/members/${member.id}/edit`" class="bg-gray-700 text-white rounded-md p-2 ">Edit</button>
+                                <a :href="route('member.show',[member.id])"><button class="bg-gray-700 text-white rounded-md p-2 mr-2">View</button></a>
+                                <a :href="route('member.edit',[member.id])"><button class="bg-gray-700 text-white rounded-md p-2 ">Edit</button></a>
                             </div>
                         </template>
                     </div>
