@@ -4,23 +4,23 @@ This system is designed to allow easy management of members of Sheffield Hackspa
 
 The system will allow:
 
-* Members to sign up to the Hackspace
-* Members to pay their membership fees
-* Members to view their membership status
-* Members to view their training status
-* Members to sign up for and/or request training
-* Administrators to view the membership status of all members
-* Administrators to add and remove members
-* Administrators to view the payment status of all members
-* Administrators to balance bank statements with the membership database
-* Portland Works to view who has access to the building
-* Trainers to view who has signed up for their training sessions
-* Trainers to view who requested training
-* Trainers to mark members as having attended and/or completed training
+- [ ] Members to sign up to the Hackspace
+- [ ] Members to pay their membership fees
+- [ ] Members to view their membership status
+- [ ] Members to view their training status
+- [ ] Members to sign up for and/or request training
+- [x] Administrators to view the membership status of all members
+- [ ] Administrators to add and remove members
+- [ ] Administrators to view the payment status of all members
+- [ ] Administrators to balance bank statements with the membership database
+- [ ] Portland Works to view who has access to the building
+- [ ] Trainers to view who has signed up for their training sessions
+- [ ] Trainers to view who requested training
+- [ ] Trainers to mark members as having attended and/or completed training
 
 ## Documentation
- * [User Guide](./documentation/user-guide.md)
  * [Database](./documentation/database.md)
+ * [Permission Model](./documentation/permission-model.md)
 
 ## Development
 The backend is built in Laravel 11 and uses a MySQL database we use the following packages:
@@ -53,7 +53,7 @@ If you make changes to models or add new DTOs you will need to run `php artian t
 You should also run `php artisan ide-helper:models -RW` to update the phpdoc blocks in the models.
 
 ### Making front end changes
-If you make changes to models or add new DTOs you will need to run `php artian typescript:transform` to update the typescript interfaces.
+If you make changes to models or add new DTOs you will need to run `php artisan typescript:transform` to update the typescript interfaces.
 
 ## Contributing
 A high percentage of quality test coverage is expected for all new code. Please run `php artisan test` before submitting a pull request.
