@@ -21,21 +21,21 @@ class MembershipHistoryListener
      */
     public function handle(MembershipHistoryChangedEvent $membershipHistoryChanged): void
     {
+
         $member = $membershipHistoryChanged->membershipHistory->member;
         $newMembershipType = $member->latestMembershipHistory->membership_type;
         switch ($newMembershipType) {
             case MembershipType::KEYHOLDER:
-                $member->assignRole(RolesEnum::KEYHOLDER->value);
-                $member->assignRole(RolesEnum::MEMBER->value);
+                $member->assignRole(RolesEnum::KEYHOLDER);
+                $member->assignRole(RolesEnum::MEMBER);
                 break;
             case MembershipType::MEMBER:
-                $member->removeRole(RolesEnum::KEYHOLDER->value);
-                $member->assignRole(RolesEnum::MEMBER->value);
+                $member->removeRole(RolesEnum::KEYHOLDER);
+                $member->assignRole(RolesEnum::MEMBER);
                 break;
             default:
-                $member->removeRole(RolesEnum::KEYHOLDER->value);
-                $member->removeRole(RolesEnum::MEMBER->value);
+                $member->removeRole(RolesEnum::KEYHOLDER);
+                $member->removeRole(RolesEnum::MEMBER);
         }
-
     }
 }

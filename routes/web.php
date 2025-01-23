@@ -23,8 +23,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/member/{member}', [Members\MemberShowController::class, 'show'])->name('member.show')->middleware("permission:".PermissionEnum::VIEWOWNMEMBER->value."|".PermissionEnum::VIEWMEMBERS->value);
     Route::get('/member/create', [Members\MemberCreateController::class, 'create'])->name('member.create')->middleware("permission:".PermissionEnum::CREATEMEMBER->value);
     Route::post('/member', [Members\MemberStoreController::class, 'store'])->name('member.store')->middleware("permission:".PermissionEnum::CREATEMEMBER->value);
-    Route::get('/member/{member}/edit', [Members\MemberEditController::class, 'edit'])->name('member.edit')->middleware("permission:".PermissionEnum::EDITMEMBERS->value."|".PermissionEnum::EDITMEMBERS->value);
-    Route::patch('/member/{member}', [Members\MemberUpdateController::class, 'update'])->name('member.update')->middleware("permission:".PermissionEnum::EDITMEMBERS->value."|".PermissionEnum::EDITMEMBERS->value);
+    Route::get('/member/{member}/edit', [Members\MemberEditController::class, 'edit'])->name('member.edit')->middleware("permission:".PermissionEnum::EDITOWNMEMBER->value."|".PermissionEnum::EDITMEMBERS->value);
+    Route::patch('/member/{member}', [Members\MemberUpdateController::class, 'update'])->name('member.update')->middleware("permission:".PermissionEnum::EDITOWNMEMBER->value."|".PermissionEnum::EDITMEMBERS->value);
 });
 
 require __DIR__.'/auth.php';

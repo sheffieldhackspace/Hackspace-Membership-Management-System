@@ -16,7 +16,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $user_id
@@ -165,10 +165,10 @@ class Member extends Model
 
     }
 
-    public function setMembershipType($value): void
+    public function setMembershipType(MembershipType $membershipType): void
     {
         $this->membershipHistory()->create([
-            'membership_type' => $value,
+            'membership_type' => $membershipType->value,
         ]);
     }
 

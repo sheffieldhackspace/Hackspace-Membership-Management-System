@@ -31,7 +31,6 @@ class MemberFactory extends Factory
         return [
             'name' => "{$firstName} {$this->faker->lastName}",
             'known_as' => $firstName,
-
         ];
     }
 

@@ -59,7 +59,8 @@ class MembersIndexControllerTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->component('Members/Index')
             ->has('members.data', 1)
-            ->where('members.data.0.membershipType', MembershipType::UNPAIDMEMBER)
+            ->where('members.data.0.membershipType.label', MembershipType::UNPAIDMEMBER->label())
+            ->where('members.data.0.membershipType.value', MembershipType::UNPAIDMEMBER->value)
         );
     }
 
