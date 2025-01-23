@@ -10,7 +10,7 @@ class MembershipHistoryData extends Data
     public function __construct(
         public string $id,
         public string $memberId,
-        public string $membershipType,
+        public MembershipTypeData $membershipType,
         public string $startDate,
     ) {
     }
@@ -20,7 +20,7 @@ class MembershipHistoryData extends Data
         return new self(
             id: $membershipHistory->id,
             memberId: $membershipHistory->member_id,
-            membershipType: $membershipHistory->membership_type->label(),
+            membershipType: MembershipTypeData::fromEnum($membershipHistory->membership_type),
             startDate: $membershipHistory->created_at->format('d/m/Y'),
         );
     }

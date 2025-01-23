@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Members;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class MembersStoreController extends Controller
+class MemberStoreController extends Controller
 {
 
     /**

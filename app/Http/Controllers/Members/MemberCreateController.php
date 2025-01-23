@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Members;
 
 use App\Http\Controllers\Controller;
 
-class MembersCreateController extends Controller
+class MemberCreateController extends Controller
 {
 
 

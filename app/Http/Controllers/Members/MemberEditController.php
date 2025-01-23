@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Members;
 
 use App\Data\MemberData;
+use App\Data\MembershipTypeData;
 use App\Enums\PermissionEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
@@ -11,23 +12,21 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 
-class MembersShowController extends Controller
+class MemberEditController extends Controller
 {
-
     /**
-     * Display the specified resource.
+     * Show the form for editing the specified resource.
      */
-    public function show(Request $request, Member $member)
+    public function edit(Request $request, Member $member)
     {
         /** @var User $user */
         $user = $request->user();
 
-
         if(
-            !$user->membersHavePermission(PermissionEnum::VIEWMEMBERS->value)
+            !$user->membersHavePermission(PermissionEnum::EDITOWNMEMBER->value)
             && !$user->members->contains('id','=',$member->id)
         ){
-            throw UnauthorizedException::forPermissions([PermissionEnum::VIEWOWNMEMBER->value]);
+            throw UnauthorizedException::forPermissions([PermissionEnum::EDITOWNMEMBER->value]);
         }
 
         $member->load([
@@ -37,9 +36,9 @@ class MembersShowController extends Controller
             'trusteeHistory',
         ]);
 
-        return Inertia::render('Members/Show', [
+        return Inertia::render('Members/Edit', [
             'member' => MemberData::fromModel($member),
+            'membershipTypes' => MembershipTypeData::getAll(),
         ]);
     }
-
 }

@@ -7,10 +7,10 @@
                 View {{ member.name }}
             </h2>
         </template>
+
         <div class="py-12">
             <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                 <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-
                       <h3 class="text-l font-semibold leading-tight text-gray-800 mb-2">Basic Information</h3>
                       <ul>
                         <li><strong>Name:</strong> {{ member.name }}</li>
@@ -43,7 +43,7 @@
                       <h3 class="text-l font-semibold leading-tight text-gray-800 mb-2">Membership History</h3>
                       <ul>
                         <li v-for="history in member.membershipHistory" :key="history.id">
-                          {{ history.membershipType}} ({{ history.startDate }})
+                          {{ history.membershipType.label}} ({{ history.startDate }})
                         </li>
                       </ul>
                 </div>

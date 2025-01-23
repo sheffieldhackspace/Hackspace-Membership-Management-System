@@ -39,6 +39,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => PermissionEnum::VIEWMEMBERS, 'guard_name' => 'member']);
         Permission::create(['name' => PermissionEnum::EDITMEMBERS, 'guard_name' => 'member']);
         Permission::create(['name' => PermissionEnum::CREATEMEMBER, 'guard_name' => 'member']);
+        Permission::create(['name' => PermissionEnum::CHANGEMEMBERSHIPTYPE, 'guard_name' => 'member']);
         $adminRole = Role::create(['name' => RolesEnum::ADMIN->value, 'guard_name' => 'member']);
         $adminRole->givePermissionTo(Permission::all()->where('guard_name', 'member')->pluck('name')->toArray());
     }

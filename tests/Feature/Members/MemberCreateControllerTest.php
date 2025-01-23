@@ -7,8 +7,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
-#[CoversClass(\App\Http\Controllers\Members\MembersCreateController::class)]
-class MembersCreateControllerTest extends TestCase
+#[CoversClass(\App\Http\Controllers\Members\MemberCreateController::class)]
+class MemberCreateControllerTest extends TestCase
 {
     use RefreshDatabase;
 

@@ -16,6 +16,7 @@ enum PermissionEnum: string
     case EDITMEMBERS = 'edit-members';
     case EDITOWNMEMBER = 'edit-member';
     case CREATEMEMBER = 'create-member';
+    case CHANGEMEMBERSHIPTYPE = 'change-membership-type';
 
     case VIEWPWMEMBERREPORT = 'view-pw-member-report';
 

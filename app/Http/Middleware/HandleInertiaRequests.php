@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -33,7 +34,22 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'permissions' => $this->getPermissions($request->user()),
             ],
         ];
+    }
+
+    private function getPermissions(?User $user){
+        if(!$user){
+            return [];
+        }
+
+        $permissions = $user->getAllPermissions()->pluck('name');
+
+        $user->members->each(function($member) use (&$permissions){
+            $permissions = $permissions->merge($member->getAllPermissions()->pluck('name'));
+        });
+
+        return $permissions->unique()->toArray();
     }
 }

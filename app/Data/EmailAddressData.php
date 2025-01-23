@@ -8,11 +8,11 @@ use Spatie\LaravelData\Data;
 class EmailAddressData extends Data
 {
     public function __construct(
-        public string $id,
-        public string $memberId,
+        public string|null $id,
+        public string|null $memberId,
         public string $emailAddress,
         public bool $isPrimary,
-        public ?string $verifiedAt
+        public string|null $verifiedAt
     ) {
     }
 

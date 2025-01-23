@@ -68,7 +68,7 @@ const filterMembers = () => {
                         <template v-for="member in members.data" :key="member.id" >
                             <div class="col-span-4 text-sm text-gray-900 pt-3 flex items-center">{{ member.name }}</div>
                             <div class="col-span-2 text-sm text-gray-900 pt-3 flex items-center">{{ member.knownAs }}</div>
-                            <div class="col-span-2 text-sm text-gray-900 pt-3 flex items-center">{{ member.membershipType }}</div>
+                            <div class="col-span-2 text-sm text-gray-900 pt-3 flex items-center">{{ member.membershipType.label }}</div>
                             <div class="col-span-2 text-sm text-gray-900 pt-3 flex items-center">{{ member.hasActiveMembership ? 'Yes' : 'No' }}</div>
                             <div class="col-span-2 pt-3 pr-4 justify-self-stretch content-end">
                                 <a :href="route('member.show',[member.id])"><button class="bg-gray-700 text-white rounded-md p-2 mr-2">View</button></a>

@@ -13,19 +13,19 @@ class MemberData extends Data
      * @param string $id
      * @param string $name
      * @param string $knownAs
-     * @param string $membershipType
+     * @param MembershipTypeData $membershipType
      * @param bool $hasActiveMembership
      * @param string|null $joiningDate
-     * @param EmailAddressData[]|Lazy|Null $emailAddresses
-     * @param PostalAddressData|Lazy|Null $postalAddress
-     * @param TrusteeHistoryData[]|Lazy|Null $trusteeHistories
-     * @param MembershipHistoryData[]|Lazy|Null $membershipHistories
+     * @param EmailAddressData[]|Lazy $emailAddresses
+     * @param PostalAddressData|Lazy $postalAddress
+     * @param TrusteeHistoryData[]|Lazy $trusteeHistory
+     * @param MembershipHistoryData[]|Lazy $membershipHistory
      */
     public function __construct(
         public string $id,
         public string $name,
         public string $knownAs,
-        public string $membershipType,
+        public MembershipTypeData $membershipType,
         public bool $hasActiveMembership,
         public ?string $joiningDate,
         public array|Lazy $emailAddresses,
@@ -41,7 +41,7 @@ class MemberData extends Data
             id: $member->id,
             name: $member->name,
             knownAs: $member->known_as,
-            membershipType: $member->getMembershipType()->label(),
+            membershipType: MembershipTypeData::fromEnum($member->getMembershipType()),
             hasActiveMembership: $member->getHasActiveMembership(),
             joiningDate: $member->getJoiningDate() ? $member->getJoiningDate()->toDateString() : null,
             emailAddresses: Lazy::whenLoaded(
@@ -50,7 +50,7 @@ class MemberData extends Data
                 fn () => $member->emailAddresses->map(fn ($emailAddress) => EmailAddressData::fromModel($emailAddress))
             ),
             postalAddress: Lazy::whenLoaded(
-                'postalAddresses',
+                'postalAddress',
                 $member,
                 fn () => PostalAddressData::fromModel($member->postalAddress)
             ),

@@ -16,7 +16,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 
 /**
- *
+ * 
  *
  * @property string $id
  * @property string|null $user_id

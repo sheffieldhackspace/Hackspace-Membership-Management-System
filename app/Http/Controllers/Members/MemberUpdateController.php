@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Member;
 use Illuminate\Http\Request;
 
-class MembersUpdateController extends Controller
+class MemberUpdateController extends Controller
 {
 
     /**

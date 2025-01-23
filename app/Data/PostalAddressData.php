@@ -13,7 +13,7 @@ class PostalAddressData extends Data
         public string $line1,
         public ?string $line2,
         public ?string $line3,
-        public string $city,
+        public ?string $city,
         public ?string $county,
         public string $postcode
     ) {
