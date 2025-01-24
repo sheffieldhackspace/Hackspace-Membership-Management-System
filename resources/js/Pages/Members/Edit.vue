@@ -16,83 +16,82 @@
                     </div>
 
                     <div class="col-span-1 content-center">
-                        <label for="name">Name:</label>
+                        <InputLabel for="name" value="Name:" />
                     </div>
                     <div class="col-span-2">
-                        <input type="text" v-model="form.name" id="name" class="mt-1 block rounded border-gray-200 w-full" />
+                        <TextInput type="text" v-model="form.name" id="name" class="mt-1 block rounded border-gray-200 w-full" />
+                        <InputError class="mt-2" :message="form.errors.name" />
                     </div>
                     <div class="col-span-1 content-center">
-                        <label for="knownAs">Known As:</label>
+                        <InputLabel for="knownAs" value="Known As:" />
                     </div>
                     <div class="col-span-2">
-                        <input type="text" v-model="form.knownAs" id="knownAs" class="mt-1 block w-full rounded border-gray-200" />
+                        <TextInput type="text" v-model="form.knownAs" id="knownAs" class="mt-1 block w-full rounded border-gray-200" />
+                        <InputError class="mt-2" :message="form.errors.knownAs" />
                     </div>
 
                     <div class="md:col-span-6 col-span-3 border-t-2 border-gray-200 pt-4">
                         <h3 class="text-l font-semibold leading-tight text-gray-800 mb-2">Emails</h3>
+                        <InputError class="mt-2" :message="form.errors.emailAddresses" />
                     </div>
 
                     <template v-for="(email, index) in form.emailAddresses" :key="email.id">
                         <div class="col-span-1 content-center">
-                            <label :for="'email_' + index">Email</label>
+                            <InputLabel :for="'emailAddresses.' + index + '.email'" :value="'Email ' + (index + 1)" />
                         </div>
                         <div class="col-span-2">
-                            <input type="email" v-model="email.emailAddress" :id="'email_' + index" class="mt-1 block w-full rounded border-gray-200" />
+                            <TextInput type="email" v-model="email.emailAddress" :id="'emailAddresses.' + index + '.email'" class="mt-1 block w-full rounded border-gray-200" />
                         </div>
                         <div class="col-span-1 content-center items-center flex">
-                            <label class="mr-2" :for="'isPrimary_' + index">Primary</label>
-                            <input type="checkbox" v-model="email.isPrimary" :id="'isPrimary_' + index" class="mt-1 block rounded border-gray-200" />
-
+                            <InputLabel class="mr-2" :for="'emailAddresses.' + index + '.isPrimary'" value="Primary" />
+                            <Checkbox name="'emailAddresses.' + index + '.isPrimary'" v-model:checked="email.isPrimary" />
                         </div>
                         <div class="col-span-2 content-center">
-                            <button type="button" @click="form.emailAddresses?.splice(index, 1)" class="bg-red-500 text-white rounded-md p-2">Remove</button>
+                            <DangerButton @click="form.emailAddresses?.splice(index, 1)">Delete</DangerButton>
                         </div>
                     </template>
                     <div class="md:col-span-6 col-span-3">
-                        <button type="button" @click="addEmailAddress" class="bg-gray-900 text-white rounded-md p-2">Add Email</button>
+                        <SecondaryButton @click="addEmailAddress">Add Email</SecondaryButton>
                     </div>
 
                     <div class="md:col-span-6 col-span-3 border-t-2 border-gray-200 pt-4">
                         <h3 class="text-l font-semibold leading-tight text-gray-800 mb-2">Postal Address</h3>
                     </div>
                     <div class="col-span-1 content-center">
-                        <label for="line1">Line 1</label>
-                    </div>
-
-                    <div class="col-span-2 content-center">
-                        <input type="text" v-model="form.postalAddress.line1" id="line1" class="mt-1 block w-full" />
-                    </div>
-
-                    <div class="col-span-1 content-center">
-                        <label for="line2">Line 2</label>
+                        <InputLabel for="line1" value="Line 1" />
                     </div>
                     <div class="col-span-2 content-center">
-                        <input type="text" v-model="form.postalAddress.line2" id="line2" class="mt-1 block w-full" />
-                    </div>
-
-                    <div class="col-span-1 content-center">
-                        <label for="line3">Line 3</label>
-                    </div>
-                    <div class="col-span-2 content-center">
-                        <input type="text" v-model="form.postalAddress.line3" id="line3" class="mt-1 block w-full" />
+                        <TextInput type="text" v-model="form.postalAddress.line1" id="line1" class="mt-1 block w-full" />
                     </div>
                     <div class="col-span-1 content-center">
-                        <label for="city">City</label>
+                        <InputLabel for="line2" value="Line 2" />
                     </div>
                     <div class="col-span-2 content-center">
-                        <input type="text" v-model="form.postalAddress.city" id="city" class="mt-1 block w-full" />
+                        <TextInput type="text" v-model="form.postalAddress.line2" id="line2" class="mt-1 block w-full" />
                     </div>
                     <div class="col-span-1 content-center">
-                        <label for="county">County</label>
+                        <InputLabel for="line3" value="Line 3" />
                     </div>
                     <div class="col-span-2 content-center">
-                        <input type="text" v-model="form.postalAddress.county" id="county" class="mt-1 block w-full" />
+                        <TextInput type="text" v-model="form.postalAddress.line3" id="line3" class="mt-1 block w-full" />
                     </div>
                     <div class="col-span-1 content-center">
-                        <label for="postcode">Postcode</label>
+                        <InputLabel for="city" value="City" />
                     </div>
                     <div class="col-span-2 content-center">
-                        <input type="text" v-model="form.postalAddress.postcode" id="postcode" class="mt-1 block w-full" />
+                        <TextInput type="text" v-model="form.postalAddress.city" id="city" class="mt-1 block w-full" />
+                    </div>
+                    <div class="col-span-1 content-center">
+                        <InputLabel for="county" value="County" />
+                    </div>
+                    <div class="col-span-2 content-center">
+                        <TextInput type="text" v-model="form.postalAddress.county" id="county" class="mt-1 block w-full" />
+                    </div>
+                    <div class="col-span-1 content-center">
+                        <InputLabel for="postcode" value="Postcode" />
+                    </div>
+                    <div class="col-span-2 content-center">
+                        <TextInput type="text" v-model="form.postalAddress.postcode" id="postcode" class="mt-1 block w-full" />
                     </div>
 
                     <HasPermission :permissions="['change-membership-type']">
@@ -100,27 +99,30 @@
                             <h3 class="text-l font-semibold leading-tight text-gray-800 mb-2">Membership</h3>
                         </div>
                         <div class="col-span-1 content-center">
-                            <label for="membershipType">Membership Type</label>
+                            <InputLabel for="membershipType" value="Membership Type" />
                         </div>
                         <div class="col-span-2">
                             <select
-                                v-model="form.membershipType.value"
+                                v-model="form.membershipType"
                                 class="border border-gray-300 rounded-md p-2 pr-10"
                                 id="membershipType"
                             >
                                 <option v-for="type in props.membershipTypes" :key="type.label" :value="type.value" >{{ type.label }}</option>
                             </select>
+                            <InputError class="mt-2" :message="form.errors.membershipType" />
                         </div>
 
                         <div class="col-span-3 content-center items-center flex space-x-2">
-                            <label for="trustee">Is a Trustee</label>
-                            <input type="checkbox" v-model="form.trustee" id="trustee" class="mt-1 block rounded border-gray-200" />
+                            <InputLabel for="trustee" value="Is a Trustee" />
+                            <Checkbox name="trustee" v-model:checked="form.trustee" />
+                            <InputError class="mt-2" :message="form.errors.trustee" />
+
                         </div>
                     </HasPermission>
 
                     <div class="md:col-span-6 col-span-3 flex place-content-end content-center space-x-2">
-                        <a :href="route('dashboard')"> <button type="button" class="bg-gray-900 text-white rounded-md p-2">Cancel</button></a>
-                        <button type="submit" @click="updateMember" class="rounded-md bg-brand px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
+                        <a :href=" route('dashboard')"><SecondaryButton>Cancel</SecondaryButton></a>
+                        <PrimaryButton type="submit" @click="updateMember">Save</PrimaryButton>
                     </div>
                 </div>
             </form>
@@ -135,6 +137,13 @@ import MemberData = App.Data.MemberData;
 import MembershipTypeData = App.Data.MembershipTypeData;
 import { Head } from '@inertiajs/vue3';
 import HasPermission from "@/Components/HasPermission.vue";
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from "@/Components/TextInput.vue";
+import Checkbox from "@/Components/Checkbox.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
+import DangerButton from "@/Components/DangerButton.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import InputError from "@/Components/InputError.vue";
 
 const props = defineProps< {
     member: MemberData
@@ -153,11 +162,12 @@ const form = useForm({
         county: props.member.postalAddress?.county ?? '',
         postcode: props.member.postalAddress?.postcode ?? ''
     },
-    membershipType: props.member.membershipType,
+    membershipType: props.member.membershipType.value,
     trustee: props.member.trusteeHistory ? props.member.trusteeHistory[0]?.resignedAt === null : false
 });
 
 const updateMember = () => {
+    console.log(form.data());
     form.patch(route('member.update', props.member.id));
 };
 

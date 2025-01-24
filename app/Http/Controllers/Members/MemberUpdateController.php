@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Members;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Members\MembersUpdateRequest;
 use App\Models\Member;
-use Illuminate\Http\Request;
 
 class MemberUpdateController extends Controller
 {
@@ -12,9 +12,10 @@ class MemberUpdateController extends Controller
     /**
      * Updates a existing resource in storage.
      */
-    public function update(Request $request, Member $member)
+    public function update(MembersUpdateRequest $request, Member $member)
     {
-        //
+        $data = $request->validated();
+        dd($data);
     }
 
 
