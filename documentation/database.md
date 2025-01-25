@@ -168,24 +168,44 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    members ||--o{ member_transactions : has
-    member_transactions {
+
+    bank_transactions {
         uuid id PK
-        string member_id FK
-        string bank_transaction_id FK
+        string acc_num_sort_code_hash
+        string description
+    }
+
+    bank_transactions ||--|| transactions : transaction_reference
+    members ||--o{ transactions : member_id
+    transactions {
+        int id PK
+        uuid transaction_reference FK
+        uuid transaction_type_id FK
+        uuid member_id FK
+        float debit_amount
+        float credit_amount
         datetime created_at
         datetime updated_at
     }
-    bank_transactions ||--|| member_transactions : has
-    bank_transactions {
+
+    %% this will store transaction types so 
+    %% that you can filter them as you like
+    transaction_type ||--|{transactions: transaction_type_id
+    transaction_type {
         uuid id PK
-        float debit_amount
-        float credit_amount
-        string acc_num_sort_code_hash
         string description
-        datetime date
-        string transaction_type
-        datetime created_at
-        datetime updated_at
+    }
+
+    snack_transactions ||--|| transactions : transaction_reference
+    snack_transactions {
+        uuid id PK
+        %% we could also make a snack enum and stuff but whatevs
+        string snack 
+    }
+
+    other_transactions ||--|| transactions : transaction_reference
+    other_transactions {
+        uuid id PK
+        string description
     }
 ```
