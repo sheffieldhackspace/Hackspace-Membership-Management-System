@@ -10,9 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Enums\MembershipType;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $member_id
@@ -38,7 +39,7 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class EmailAddress extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, SoftDeletes;
     protected $fillable = [
         'email_address',
         'is_primary',
