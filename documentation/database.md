@@ -175,7 +175,7 @@ erDiagram
         string description
     }
 
-    bank_transactions ||--|| transactions : transaction_reference
+    bank_transactions ||--|o transactions : transaction_reference
     members ||--o{ transactions : member_id
     transactions {
         int id PK
@@ -186,6 +186,11 @@ erDiagram
         float credit_amount
         datetime created_at
         datetime updated_at
+
+        %% it might be a good idea to keep record of
+        %% why or from where the payment was made.
+        %% think something like "web ui", "automatic", etc...
+        string origination 
     }
 
     %% this will store transaction types so 
@@ -196,16 +201,35 @@ erDiagram
         string description
     }
 
-    snack_transactions ||--|| transactions : transaction_reference
-    snack_transactions {
+    %% this could maybe be a sku
+    material_transactions ||--|o transactions : transaction_reference
+    material_transactions {
         uuid id PK
-        %% we could also make a snack enum and stuff but whatevs
-        string snack 
+        uuid material_id FK
+        string description
+        float mm2
     }
 
-    other_transactions ||--|| transactions : transaction_reference
-    other_transactions {
+    material ||--|{ material_transactions: material_id
+    material {
+        uuid id PK
+        float cost_per_mm2
+        string description
+    }
+
+    general_transaction ||--|o transactions : transaction_reference
+    general_transaction {
+        uuid id PK
+        uuid sku_id FK
+        int count
+    }
+
+    %% potentially, membership rates can be a sku!
+    skus ||--|{ general_transaction : sku_id
+    skus {
         uuid id PK
         string description
+        int stock
+        float cost
     }
 ```
