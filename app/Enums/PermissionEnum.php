@@ -4,12 +4,11 @@ namespace App\Enums;
 
 enum PermissionEnum: string
 {
-    case PROFILEEDIT = 'profile-edit';
 
     case VIEWUSERS = 'view-users';
-    case VIEWUSER = 'view-user';
+    case VIEWOWNUSER = 'view-user';
     case EDITUSERS = 'edit-users';
-    case EDITUSER = 'edit-user';
+    case EDITOWNUSER = 'edit-user';
 
     case VIEWMEMBERS = 'view-members';
     case VIEWOWNMEMBER = 'view-member';
@@ -23,11 +22,10 @@ enum PermissionEnum: string
     public function label(): string
     {
         return match ($this) {
-            self::PROFILEEDIT => 'Profile Edit',
             self::VIEWUSERS => 'View Users',
-            self::VIEWUSER => 'View User',
+            self::VIEWOWNUSER => 'View User',
             self::EDITUSERS => 'Edit Users',
-            self::EDITUSER => 'Edit User',
+            self::EDITOWNUSER => 'Edit User',
             self::VIEWMEMBERS => 'View Members',
             self::VIEWOWNMEMBER => 'View Member',
             self::EDITMEMBERS => 'Edit Members',

@@ -21,7 +21,7 @@ Roles should only be used to determine what a user/member can do within a sectio
 * `Admin` - This role is assigned to members who are administrators of the system Trusees automatically have this assigned. They can view the membership status of all members, add and remove members, view the payment status of all members, balance bank statements with the membership database, and view who has access to the building.
 
 ## Development
-The system uses the [Spatie Permissions](https://spatie.be/docs/laravel-permission/v5/introduction) package to manage permissions. 
+The system uses the [Spatie Permissions](https://spatie.be/docs/laravel-permission/v5/introduction) package to manage permissions and laravel policys to manage authorization. This package is well documented and should be used as a reference for any development work.
 
 For backend authorization we aim to use middlewear as defined in the route files as much as possible. That way any request without permission never makes it to a controller. This can be backed up with checks within the controllers if needed.
 

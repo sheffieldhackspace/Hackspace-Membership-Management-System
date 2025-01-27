@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PermissionEnum;
 use App\Events\TrusteeHistoryChangedEvent;
 use App\Events\UserCreatedEvent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -95,13 +97,18 @@ class User extends Authenticatable
         return $this->hasMany(Member::class);
     }
 
-    public function membersHavePermission(string $permission): bool
-    {
-        return $this->members->contains(fn (Member $member) => $member->hasPermissionTo($permission));
-    }
-
     public function membersHaveRole(string $role): bool
     {
         return $this->members->contains(fn (Member $member) => $member->hasRole($role));
+    }
+
+    public function checkPermissions(array $permissions): bool
+    {
+        return $this->hasAnyPermission($permissions) || $this->members->contains(fn (Member $member) => $member->hasAnyPermission($permissions));
+    }
+
+    public function checkRoles(array $roles): bool
+    {
+        return $this->hasAnyRole($roles) || $this->members->contains(fn (Member $member) => $member->hasAnyRole($roles));
     }
 }

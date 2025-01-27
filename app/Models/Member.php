@@ -17,7 +17,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 
 /**
- *
+ * 
  *
  * @property string $id
  * @property string|null $user_id
@@ -25,6 +25,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $known_as
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EmailAddress> $emailAddresses
  * @property-read int|null $email_addresses_count
  * @property-read \App\Models\MembershipHistory|null $latestMembershipHistory
@@ -49,17 +50,21 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder<static>|Member membershipType(\App\Enums\MembershipType $membershipType)
  * @method static Builder<static>|Member newModelQuery()
  * @method static Builder<static>|Member newQuery()
+ * @method static Builder<static>|Member onlyTrashed()
  * @method static Builder<static>|Member permission($permissions, $without = false)
  * @method static Builder<static>|Member query()
  * @method static Builder<static>|Member role($roles, $guard = null, $without = false)
  * @method static Builder<static>|Member whereCreatedAt($value)
+ * @method static Builder<static>|Member whereDeletedAt($value)
  * @method static Builder<static>|Member whereId($value)
  * @method static Builder<static>|Member whereKnownAs($value)
  * @method static Builder<static>|Member whereName($value)
  * @method static Builder<static>|Member whereUpdatedAt($value)
  * @method static Builder<static>|Member whereUserId($value)
+ * @method static Builder<static>|Member withTrashed()
  * @method static Builder<static>|Member withoutPermission($permissions)
  * @method static Builder<static>|Member withoutRole($roles, $guard = null)
+ * @method static Builder<static>|Member withoutTrashed()
  * @mixin \Eloquent
  */
 class Member extends Model
@@ -168,6 +173,7 @@ class Member extends Model
 
     public function setMembershipType(MembershipType $membershipType): void
     {
+
         $this->membershipHistory()->create([
             'membership_type' => $membershipType->value,
         ]);
@@ -194,10 +200,19 @@ class Member extends Model
         ]);
     }
 
-    public function getIsTrustee(): bool
+    public function getIsActiveTrustee(): bool
     {
         $latestTrusteeHistory = $this->latestTrusteeHistory;
-        return $latestTrusteeHistory?->isTrustee()->exists() ?? false;
+
+        if(!$latestTrusteeHistory) {
+            return false;
+        }
+
+        if(!$latestTrusteeHistory->resigned_at) {
+            return true;
+        }
+
+        return false;
     }
 
     public function scopeIsTrustee(Builder $query): Builder

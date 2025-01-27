@@ -14,9 +14,11 @@ class RolesAndPermissionsSeeder extends Seeder
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        Permission::create(['name' => PermissionEnum::PROFILEEDIT, 'guard_name' => 'web']);
+        Permission::create(['name' => PermissionEnum::EDITOWNUSER, 'guard_name' => 'web']);
+        Permission::create(['name' => PermissionEnum::VIEWOWNUSER, 'guard_name' => 'web']);
+
         $userRole = Role::create(['name' => RolesEnum::USER->value, 'guard_name' => 'web']);
-        $userRole->givePermissionTo([PermissionEnum::PROFILEEDIT]);
+        $userRole->givePermissionTo([PermissionEnum::EDITOWNUSER, PermissionEnum::VIEWOWNUSER]);
 
         Permission::create(['name' => PermissionEnum::VIEWOWNMEMBER, 'guard_name' => 'member']);
         Permission::create(['name' => PermissionEnum::EDITOWNMEMBER, 'guard_name' => 'member']);

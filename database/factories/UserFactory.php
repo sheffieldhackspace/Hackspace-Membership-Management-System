@@ -2,6 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Enums\MembershipType;
+use App\Enums\RolesEnum;
+use App\Models\Member;
+use App\Models\MembershipHistory;
+use App\Models\TrusteeHistory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -39,5 +45,25 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    public function isAdmin(): static
+    {
+        return $this->has(Member::factory([
+            'name' => 'Admin User',
+            'known_as' => 'Admin',
+        ])
+            ->has(MembershipHistory::factory([
+                'membership_type' => MembershipType::KEYHOLDER,
+            ]))
+            ->isTrustee()
+        );
+    }
+
+    public function isPWUser(): static
+    {
+        return $this->afterCreating(fn (User $user) =>
+            $user->assignRole(RolesEnum::PWUSER)
+        );
     }
 }

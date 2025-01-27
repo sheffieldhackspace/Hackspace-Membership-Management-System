@@ -23,28 +23,8 @@ abstract class TestCase extends BaseTestCase
 
     public function asAdminUser(): User
     {
-        $user = User::factory([])
-            ->has(Member::factory([
-                'name' => 'Admin User',
-                'known_as' => 'Admin',
-            ])
-                ->has(MembershipHistory::factory([
-                    'membership_type' => MembershipType::KEYHOLDER,
-                ]))
-                ->isTrustee()
-            )->create();
+        $user = User::factory()->isAdmin()->create();
         $this->actingAs($user);
-
-        return $user;
-    }
-
-    public function asPWUser(): User
-    {
-        $user = User::factory()
-            ->create();
-        $this->actingAs($user);
-
-        $user->assignRole(RolesEnum::PWUSER);
 
         return $user;
     }

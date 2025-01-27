@@ -24,7 +24,7 @@ class MemberShowController extends Controller
 
 
         if(
-            !$user->membersHavePermission(PermissionEnum::VIEWMEMBERS->value)
+            !$user->checkPermissions([PermissionEnum::VIEWMEMBERS->value])
             && !$user->members->contains('id','=',$member->id)
         ){
             throw UnauthorizedException::forPermissions([PermissionEnum::VIEWOWNMEMBER->value]);

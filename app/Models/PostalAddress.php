@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- *
+ * 
  *
  * @property string $id
  * @property string $member_id
@@ -24,14 +24,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $postcode
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\Member $member
  * @method static \Database\Factories\PostalAddressFactory factory($count = null, $state = [])
  * @method static Builder<static>|PostalAddress newModelQuery()
  * @method static Builder<static>|PostalAddress newQuery()
+ * @method static Builder<static>|PostalAddress onlyTrashed()
  * @method static Builder<static>|PostalAddress query()
  * @method static Builder<static>|PostalAddress whereCity($value)
  * @method static Builder<static>|PostalAddress whereCounty($value)
  * @method static Builder<static>|PostalAddress whereCreatedAt($value)
+ * @method static Builder<static>|PostalAddress whereDeletedAt($value)
  * @method static Builder<static>|PostalAddress whereId($value)
  * @method static Builder<static>|PostalAddress whereLine1($value)
  * @method static Builder<static>|PostalAddress whereLine2($value)
@@ -39,6 +42,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static Builder<static>|PostalAddress whereMemberId($value)
  * @method static Builder<static>|PostalAddress wherePostcode($value)
  * @method static Builder<static>|PostalAddress whereUpdatedAt($value)
+ * @method static Builder<static>|PostalAddress withTrashed()
+ * @method static Builder<static>|PostalAddress withoutTrashed()
  * @mixin \Eloquent
  */
 class PostalAddress extends Model

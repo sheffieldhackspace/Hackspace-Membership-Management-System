@@ -64,4 +64,5 @@ class TrusteeHistory extends Model
             ->whereNull('resigned_at')
         );
     }
+
 }
