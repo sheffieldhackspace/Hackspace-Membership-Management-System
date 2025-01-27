@@ -35,7 +35,7 @@ The frontend is built in Vue.js 3 and uses inertia for routing. New front end co
 2. Run 
 ``` shell
 composer install
-npm install
+npm ci
 php artisan migrate --seed
 php artisan key:generate
 php artisan typescript:transform
