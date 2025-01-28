@@ -1,9 +1,6 @@
 name: Fix Code Style
 
 on:
-  push:
-    branches-ignore:
-      - main
   pull_request:
     branches:
       - main
