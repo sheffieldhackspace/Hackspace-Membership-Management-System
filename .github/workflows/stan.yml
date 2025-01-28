@@ -2,11 +2,14 @@ name: Fix Code Style
 
 on:
   push:
-    branches-ignore:
+    branches:
+      - main
+  pull_request:
+    branches:
       - main
 
 jobs:
-  lint:
+  stan:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -24,12 +27,9 @@ jobs:
           extensions: json, dom, curl, libxml, mbstring
           coverage: none
 
-      - name: Install Pint
-        run: composer global require laravel/pint
+      - name: Install Stan
+        run: composer install --dev
 
-      - name: Run Pint
-        run: pint
-
-      - name: Commit linted files
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Run Stan
+        run: composer run stan
 
