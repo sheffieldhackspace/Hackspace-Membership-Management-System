@@ -42,7 +42,6 @@ jobs:
         env:
           MYSQL_DATABASE: hms
           MYSQL_USER: user
-          MYSQL_PASSWORD: secret
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
@@ -59,6 +58,7 @@ jobs:
         env:
           DB_PORT: 3306
           DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
           DB_DATABASE: hms
           DB_USERNAME: user
           DB_PASSWORD: root
