@@ -9,6 +9,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use phpDocumentor\Reflection\Types\Boolean;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 #[CoversClass(\App\Models\Member::class)]
@@ -22,8 +24,8 @@ class UserTest extends TestCase
 
         $permissions = $user->getAllPermissions();
 
-        $this->assertContains(PermissionEnum::VIEWPWMEMBERREPORT, $permissions);
-        $this->assertContainsOnlyString($permissions);
+        $this->assertCount(1, $permissions->filter(fn(Permission $permission) => $permission->name === PermissionEnum::VIEWPWMEMBERREPORT->value));
+        $this->assertContainsOnlyUniqueValues($permissions);
     }
 
     public function test_get_all_permissions_gets_unique_permissions_from_members(): void
@@ -31,11 +33,12 @@ class UserTest extends TestCase
         $user = User::factory()
             ->has(Member::factory()->isMember()->count(2))
             ->has(Member::factory()->isKeyholder())
+            ->has(Member::factory()->isTrustee())
             ->create();
 
         $permissions = $user->getAllPermissions();
+        $this->assertCount(1, $permissions->filter(fn(Permission $permission) => $permission->name === PermissionEnum::VIEWOWNMEMBER->value));
         $this->assertContainsOnlyUniqueValues($permissions);
-        $this->assertContainsOnlyString($permissions);
     }
 
     /**

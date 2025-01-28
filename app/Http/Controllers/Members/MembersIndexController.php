@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Members\MembersFilterRequest;
 use App\Models\Member;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Spatie\LaravelData\PaginatedDataCollection;
 
@@ -19,7 +20,6 @@ class MembersIndexController extends Controller
      */
     public function index(MembersFilterRequest $request)
     {
-
         return Inertia::render('Members/Index', [
             'members' => MemberData::collect(Member::orderBy('name', 'asc')
                 ->when($request->get('search'), fn($query, string $search) => $query->where('name', 'like', "%$search%")->orWhere('known_as', 'like', "%$search%"))

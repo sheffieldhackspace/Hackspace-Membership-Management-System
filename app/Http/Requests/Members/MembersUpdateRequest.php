@@ -5,6 +5,7 @@ namespace App\Http\Requests\Members;
 use App\Enums\MembershipType;
 use App\Enums\PermissionEnum;
 use App\Models\Member;
+use App\Models\User;
 use App\Rules\OnePrimaryEmailAddress;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -53,7 +54,11 @@ class MembersUpdateRequest extends FormRequest
             ]);
         };
 
-        if(!$this->user()->checkPermissions([PermissionEnum::CHANGEMEMBERSHIPTYPE->value])){
+        /** @var User $user */
+        $user = $this->user();
+        $member = Member::find($this->route('member'))->firstOrFail();
+
+        if($user->cant('changeMembershipType', $member)){
             $this->replace([
                 'membershipType' => null,
                 'trustee' => null,

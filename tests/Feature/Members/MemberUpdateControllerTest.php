@@ -145,7 +145,6 @@ class MemberUpdateControllerTest extends TestCase
 
         $data = $this->getData($member, ['membershipType' => MembershipType::KEYHOLDER->value]);
 
-
         $response = $this->patch(route('member.update', [$member->id]), $data);
 
         $response->assertStatus(200);

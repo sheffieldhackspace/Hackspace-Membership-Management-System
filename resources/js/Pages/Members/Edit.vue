@@ -94,7 +94,7 @@
                         <TextInput type="text" v-model="form.postalAddress.postcode" id="postcode" class="mt-1 block w-full" />
                     </div>
 
-                    <HasPermission :permissions="['change-membership-type']">
+                    <template v-if="props.canChangeMembershipType">
                         <div class="md:col-span-6 col-span-3 border-t-2 border-gray-200 pt-4">
                             <h3 class="text-l font-semibold leading-tight text-gray-800 mb-2">Membership</h3>
                         </div>
@@ -118,7 +118,7 @@
                             <InputError class="mt-2" :message="form.errors.trustee" />
 
                         </div>
-                    </HasPermission>
+                    </template>
 
                     <div class="md:col-span-6 col-span-3 flex place-content-end content-center space-x-2">
                         <a :href=" route('dashboard')"><SecondaryButton>Cancel</SecondaryButton></a>
@@ -147,7 +147,8 @@ import InputError from "@/Components/InputError.vue";
 
 const props = defineProps< {
     member: MemberData
-    membershipTypes: MembershipTypeData
+    membershipTypes: MembershipTypeData[]
+    canChangeMembershipType: boolean
 }>();
 
 const form = useForm({

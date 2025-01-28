@@ -39,6 +39,7 @@ class MemberEditController extends Controller
         return Inertia::render('Members/Edit', [
             'member' => MemberData::fromModel($member),
             'membershipTypes' => MembershipTypeData::getAll(),
+            'canChangeMembershipType' => $user->can('changeMembershipType', $member),
         ]);
     }
 }

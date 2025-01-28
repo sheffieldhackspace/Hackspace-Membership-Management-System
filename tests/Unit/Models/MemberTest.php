@@ -14,6 +14,8 @@ class MemberTest extends TestCase
 
     public function test(): void
     {
+        $this->markTestIncomplete('Tests for the Member model have not been implemented yet.');
+
 
     }
 }

@@ -16,7 +16,7 @@ use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- *
+ * 
  *
  * @property string $id
  * @property string $email
@@ -53,7 +53,9 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasUuids, HasRoles;
+    use HasFactory, Notifiable, HasUuids, HasRoles {
+        getAllPermissions as protected traitGetAllPermissions;
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -121,8 +123,9 @@ class User extends Authenticatable
      */
     public function getAllPermissions(): Collection
     {
-         return $this->permissions
-             ->merge($this->members->map(fn (Member $member) => $member->permissions)->flatten())
-             ->unique();
+        $memberPermissions = $this->members->map(fn (Member $member) => $member->getAllPermissions())->flatten();
+         return $this->traitGetAllPermissions()
+             ->union($memberPermissions)
+             ->unique('name');
     }
 }
