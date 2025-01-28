@@ -24,7 +24,7 @@ jobs:
       - name: Install composer dependencies
         uses: php-actions/composer@v6
         with:
-          php_extensions: zip pcntl mysqli bcmath soap intl gd exif imagick redis xdebug
+          php_extensions: zip pcntl mysqli pdo_mysql bcmath soap intl gd exif imagick redis xdebug
           php_version: "8.3"
 
       - name: Upload application
@@ -67,7 +67,7 @@ jobs:
         with:
           php_version: "8.3"
           command: test
-          php_extensions: zip pcntl mysqli bcmath soap intl gd exif imagick redis xdebug
+          php_extensions: zip pcntl mysqli pdo_mysql bcmath soap intl gd exif imagick redis xdebug
       - name: Upload application
         uses: actions/upload-artifact@v4
         with:
