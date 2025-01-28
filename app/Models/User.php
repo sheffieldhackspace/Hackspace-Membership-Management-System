@@ -54,7 +54,6 @@ class User extends Authenticatable
         getAllPermissions as protected traitGetAllPermissions;
     }
 
-
     protected $fillable = [
         'email',
         'password',
