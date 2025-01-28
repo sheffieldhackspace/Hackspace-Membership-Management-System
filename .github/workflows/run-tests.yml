@@ -21,11 +21,20 @@ jobs:
           path: /tmp/composer-cache
           key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
 
-      - name: Install composer dependencies
-        uses: php-actions/composer@v6
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          php_extensions: zip pcntl mysqli pdo_mysql bcmath soap intl gd exif imagick redis xdebug
-          php_version: "8.3"
+          php-version: '8.3'
+          extensions: zip pcntl mysqli pdo_mysql bcmath soap intl gd exif imagick redis
+          coverage: xdebug
+
+      - name: Run composer install
+        run: composer install -n --prefer-dist
+
+      - name: Prepare Laravel Application
+        run: |
+          php artisan key:generate
+          php artisan typescript:transform
 
       - name: Upload application
         uses: actions/upload-artifact@v4
