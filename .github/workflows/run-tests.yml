@@ -42,6 +42,7 @@ jobs:
       - name: Prepare Laravel Application
         run: |
           cp .env.ci .env
+          php artisan migrate
           php artisan key:generate
           php artisan typescript:transform
 
