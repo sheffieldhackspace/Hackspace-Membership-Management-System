@@ -41,8 +41,6 @@ jobs:
         image: mysql:8.4
         env:
           MYSQL_DATABASE: hms
-          MYSQL_USER: hms_user
-          MYSQL_PASSWORD: password
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
@@ -61,8 +59,8 @@ jobs:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
           DB_DATABASE: hms
-          DB_USERNAME: hms_user
-          DB_PASSWORD: password
+          DB_USERNAME: root
+          DB_PASSWORD: root
           XDEBUG_MODE: coverage
           APP_KEY: ${{ secrets.TESTING_APP_KEY }}
         with:
