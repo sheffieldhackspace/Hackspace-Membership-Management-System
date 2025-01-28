@@ -4,8 +4,10 @@ namespace Tests\Feature\User;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
+#[CoversClass(\App\Http\Controllers\UserController::class)]
 class UserControllerTest extends TestCase
 {
     use RefreshDatabase;

@@ -31,6 +31,7 @@ enum PermissionEnum: string
             self::EDITOWNMEMBER => 'Edit Member',
             self::CREATEMEMBER => 'Create Member',
             self::VIEWPWMEMBERREPORT => 'View PW User Member Report',
+            self::CHANGEMEMBERSHIPTYPE => 'Change Membership Type',
         };
     }
 }

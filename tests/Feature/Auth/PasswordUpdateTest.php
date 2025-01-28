@@ -2,11 +2,15 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordController;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
+#[CoversClass(PasswordController::class)]
 class PasswordUpdateTest extends TestCase
 {
     use RefreshDatabase;
