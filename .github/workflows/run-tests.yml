@@ -25,14 +25,14 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: zip pcntl mysqli pdo_mysql bcmath soap intl gd exif imagick redis
-          coverage: xdebug
+          extensions: zip, pcntl, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, imagick, redis
 
       - name: Run composer install
         run: composer install -n --prefer-dist
 
       - name: Prepare Laravel Application
         run: |
+          cp .env.ci .env
           php artisan key:generate
           php artisan typescript:transform
 
@@ -64,12 +64,6 @@ jobs:
       - name: Execute tests
         uses: php-actions/composer@v6
         env:
-          DB_PORT: 3306
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_DATABASE: hms
-          DB_USERNAME: root
-          DB_PASSWORD: root
           XDEBUG_MODE: coverage
           APP_KEY: ${{ secrets.TESTING_APP_KEY }}
         with:
