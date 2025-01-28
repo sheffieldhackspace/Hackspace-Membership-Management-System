@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\PermissionEnum;
+use App\Enums\RolesEnum;
 use App\Events\TrusteeHistoryChangedEvent;
 use App\Events\UserCreatedEvent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -10,11 +11,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $email
@@ -97,18 +99,30 @@ class User extends Authenticatable
         return $this->hasMany(Member::class);
     }
 
-    public function membersHaveRole(string $role): bool
+    /**
+     * Check if the user or any of their members has any of the given permissions.
+     * This should be the main way to check permissions for a user.
+     *
+     * @param array<string|PermissionEnum>|Collection<string|PermissionEnum>|string|PermissionEnum $permissions
+     * @return bool
+     */
+    public function checkPermissions(array|Collection|string|PermissionEnum $permissions): bool
     {
-        return $this->members->contains(fn (Member $member) => $member->hasRole($role));
-    }
-
-    public function checkPermissions(array $permissions): bool
-    {
+        if (is_string($permissions) || $permissions instanceof PermissionEnum) {
+            $permissions = [$permissions];
+        }
         return $this->hasAnyPermission($permissions) || $this->members->contains(fn (Member $member) => $member->hasAnyPermission($permissions));
     }
 
-    public function checkRoles(array $roles): bool
+    /**
+     * Get all permissions for the user and their members.
+     *
+     * @return Collection<string>
+     */
+    public function getAllPermissions(): Collection
     {
-        return $this->hasAnyRole($roles) || $this->members->contains(fn (Member $member) => $member->hasAnyRole($roles));
+         return $this->permissions
+             ->merge($this->members->map(fn (Member $member) => $member->permissions)->flatten())
+             ->unique();
     }
 }

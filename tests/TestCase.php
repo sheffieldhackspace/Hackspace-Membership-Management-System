@@ -28,4 +28,16 @@ abstract class TestCase extends BaseTestCase
 
         return $user;
     }
+
+    /**
+     * Asserts that the given value only contains unique values
+     *
+     * @param iterable $iterable
+     * @return void
+     */
+    public function assertContainsOnlyUniqueValues(iterable $iterable): void
+    {
+        $array = is_array($iterable) ? $iterable : iterator_to_array($iterable);
+        assert(count($array) === count(array_unique($array)),'Array contains duplicate values');
+    }
 }
