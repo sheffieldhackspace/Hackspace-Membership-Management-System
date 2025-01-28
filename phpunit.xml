@@ -12,11 +12,21 @@
             <directory>tests/Feature</directory>
         </testsuite>
     </testsuites>
+
     <source>
         <include>
-            <directory>app</directory>
+            <directory suffix=".php">./app</directory>
         </include>
+        <exclude>
+            <directory>./app/Data</directory>
+            <directory>./app/Enums</directory>
+            <directory>./app/Exceptions</directory>
+            <directory>./app/Providers</directory>
+            <directory>./app/States</directory>
+            <directory>./app/Interfaces</directory>
+        </exclude>
     </source>
+
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>

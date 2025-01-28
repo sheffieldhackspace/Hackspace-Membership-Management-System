@@ -9,7 +9,16 @@ on:
     - main
 
 jobs:
-  setup:
+  run-tests:
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: hms
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -36,40 +45,10 @@ jobs:
           php artisan key:generate
           php artisan typescript:transform
 
-      - name: Upload application
-        uses: actions/upload-artifact@v4
-        with:
-          name: app_files
-          path: .
-
-  run-tests:
-    runs-on: ubuntu-latest
-    needs: setup
-    services:
-      mysql:
-        image: mysql:8.4
-        env:
-          MYSQL_DATABASE: hms
-          MYSQL_ROOT_PASSWORD: root
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-    strategy:
-      fail-fast: false
-    steps:
-      - name: Download application
-        uses: actions/download-artifact@v4
-        with:
-          name: app_files
       - name: Execute tests
-        uses: php-actions/composer@v6
-        env:
-          XDEBUG_MODE: coverage
-          APP_KEY: ${{ secrets.TESTING_APP_KEY }}
-        with:
-          php_version: "8.3"
-          command: test
-          php_extensions: zip pcntl mysqli pdo_mysql bcmath soap intl gd exif imagick redis xdebug
+        run : |
+          php artisan test --parallel --env=testing --coverage-clover=coverage/all/cobertura.xml
+
       - name: Upload application
         uses: actions/upload-artifact@v4
         with:
