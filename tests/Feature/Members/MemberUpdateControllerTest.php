@@ -5,7 +5,6 @@ namespace Tests\Feature\Members;
 use App\Enums\MembershipType;
 use App\Models\EmailAddress;
 use App\Models\Member;
-use App\Models\MembershipHistory;
 use App\Models\PostalAddress;
 use App\Models\User;
 use Carbon\Carbon;
@@ -107,7 +106,7 @@ class MemberUpdateControllerTest extends TestCase
         $response = $this->patch(route('member.update', [$member->id]), $data);
 
         $response->assertSessionHasErrors(['postalAddress.line1', 'postalAddress.postcode']);
-        if($memberAddress) {
+        if ($memberAddress) {
             $this->assertDatabaseHas('postal_addresses', [
                 'member_id' => $member->id,
                 'line_1' => $memberAddress->line_1,
@@ -115,7 +114,7 @@ class MemberUpdateControllerTest extends TestCase
                 'line_3' => $memberAddress->line_3,
                 'city' => $memberAddress->city,
                 'county' => $memberAddress->county,
-                'postcode' =>$memberAddress->postcode,
+                'postcode' => $memberAddress->postcode,
             ]);
         }
     }
@@ -234,9 +233,9 @@ class MemberUpdateControllerTest extends TestCase
         $response->assertStatus(404);
     }
 
-    static public function provideNameUserMemberData(): iterable
+    public static function provideNameUserMemberData(): iterable
     {
-        Yield [
+        yield [
             function (): array {
                 return [
                     User::factory()->isAdmin()->create(),
@@ -244,9 +243,10 @@ class MemberUpdateControllerTest extends TestCase
                 ];
             },
         ];
-        Yield [
+        yield [
             function (): array {
                 $user = User::factory()->create();
+
                 return [
                     $user,
                     Member::factory(['user_id' => $user->id])->isMember()->create(),
@@ -255,9 +255,9 @@ class MemberUpdateControllerTest extends TestCase
         ];
     }
 
-    static public function providePostalAddressUserMemberData(): iterable
+    public static function providePostalAddressUserMemberData(): iterable
     {
-        Yield [
+        yield [
             function (): array {
                 return [
                     User::factory()->isAdmin()->create(),
@@ -265,7 +265,7 @@ class MemberUpdateControllerTest extends TestCase
                 ];
             },
         ];
-        Yield [
+        yield [
             function (): array {
                 return [
                     User::factory()->isAdmin()->create(),
@@ -273,18 +273,20 @@ class MemberUpdateControllerTest extends TestCase
                 ];
             },
         ];
-        Yield [
+        yield [
             function (): array {
                 $user = User::factory()->create();
+
                 return [
                     $user,
                     Member::factory(['user_id' => $user->id])->isMember()->create(),
                 ];
             },
         ];
-        Yield [
+        yield [
             function (): array {
                 $user = User::factory()->create();
+
                 return [
                     $user,
                     Member::factory(['user_id' => $user->id])->isMember()->has(PostalAddress::factory())->create(),
@@ -299,7 +301,7 @@ class MemberUpdateControllerTest extends TestCase
         return array_merge([
             'name' => $member->name,
             'knownAs' => $member->known_as,
-            'emailAddresses' => $member->emailAddresses->map(function(EmailAddress $emailAddress){
+            'emailAddresses' => $member->emailAddresses->map(function (EmailAddress $emailAddress) {
                 return [
                     'id' => $emailAddress->id,
                     'emailAddress' => $emailAddress->email_address,

@@ -21,7 +21,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \App\Http\Middleware\PermissionMiddleware::class,
         ]);
 
-
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

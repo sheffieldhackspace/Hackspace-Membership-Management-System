@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
@@ -15,7 +14,6 @@ class MemberTest extends TestCase
     public function test(): void
     {
         $this->markTestIncomplete('Tests for the Member model have not been implemented yet.');
-
 
     }
 }

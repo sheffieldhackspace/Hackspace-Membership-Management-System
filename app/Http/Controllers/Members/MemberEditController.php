@@ -22,10 +22,10 @@ class MemberEditController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        if(
-            !$user->checkPermissions([PermissionEnum::EDITOWNMEMBER->value])
-            && !$user->members->contains('id','=',$member->id)
-        ){
+        if (
+            ! $user->checkPermissions([PermissionEnum::EDITOWNMEMBER->value])
+            && ! $user->members->contains('id', '=', $member->id)
+        ) {
             throw UnauthorizedException::forPermissions([PermissionEnum::EDITOWNMEMBER->value]);
         }
 

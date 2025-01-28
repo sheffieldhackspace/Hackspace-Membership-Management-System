@@ -12,8 +12,7 @@ class MembershipHistoryData extends Data
         public string $memberId,
         public MembershipTypeData $membershipType,
         public string $startDate,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(MembershipHistory $membershipHistory): self
     {

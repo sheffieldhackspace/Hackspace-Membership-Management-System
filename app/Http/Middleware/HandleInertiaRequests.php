@@ -33,6 +33,7 @@ class HandleInertiaRequests extends Middleware
     {
         /* @var User $user */
         $user = $request->user();
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -41,5 +42,4 @@ class HandleInertiaRequests extends Middleware
             ],
         ];
     }
-
 }

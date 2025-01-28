@@ -12,8 +12,7 @@ class TrusteeHistoryData extends Data
         public string $memberId,
         public ?string $electedAt,
         public ?string $resignedAt
-    ) {
-    }
+    ) {}
 
     public static function fromModel(TrusteeHistory $trusteeHistory): self
     {

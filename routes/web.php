@@ -1,10 +1,8 @@
 <?php
 
-use App\Enums\PermissionEnum;
 use App\Http\Controllers\Members;
 use App\Http\Controllers\UserController;
 use App\Models\Member;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 

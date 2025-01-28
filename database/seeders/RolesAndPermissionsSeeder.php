@@ -5,8 +5,8 @@ namespace Database\Seeders;
 use App\Enums\PermissionEnum;
 use App\Enums\RolesEnum;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
@@ -14,7 +14,7 @@ class RolesAndPermissionsSeeder extends Seeder
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        //Permission and roles for users
+        // Permission and roles for users
         Permission::create(['name' => PermissionEnum::EDITOWNUSER, 'guard_name' => 'web']);
         Permission::create(['name' => PermissionEnum::VIEWOWNUSER, 'guard_name' => 'web']);
 
@@ -25,7 +25,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $pwUser = Role::create(['name' => RolesEnum::PWUSER->value, 'guard_name' => 'web']);
         $pwUser->givePermissionTo([PermissionEnum::VIEWPWMEMBERREPORT]);
 
-        //Permission and roles for members
+        // Permission and roles for members
         Permission::create(['name' => PermissionEnum::VIEWOWNMEMBER, 'guard_name' => 'member']);
         Permission::create(['name' => PermissionEnum::EDITOWNMEMBER, 'guard_name' => 'member']);
 

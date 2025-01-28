@@ -16,8 +16,7 @@ class PostalAddressData extends Data
         public ?string $city,
         public ?string $county,
         public string $postcode
-    ) {
-    }
+    ) {}
 
     public static function fromModel(PostalAddress $postalAddress): self
     {

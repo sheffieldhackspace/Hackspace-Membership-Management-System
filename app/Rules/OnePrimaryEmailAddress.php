@@ -15,11 +15,11 @@ class OnePrimaryEmailAddress implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $emailAddressData = collect($value);
-        $primaryEmailAddressCount = $emailAddressData->filter(function($emailAddress){
+        $primaryEmailAddressCount = $emailAddressData->filter(function ($emailAddress) {
             return $emailAddress['isPrimary'] == true;
         })->count();
 
-        if($primaryEmailAddressCount != 1){
+        if ($primaryEmailAddressCount != 1) {
             $fail(
                 'You must have exactly one primary email address'
             );

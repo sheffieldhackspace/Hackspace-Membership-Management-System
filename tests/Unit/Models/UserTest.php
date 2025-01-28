@@ -6,11 +6,9 @@ use App\Enums\PermissionEnum;
 use App\Models\Member;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use phpDocumentor\Reflection\Types\Boolean;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 #[CoversClass(\App\Models\Member::class)]
@@ -24,7 +22,7 @@ class UserTest extends TestCase
 
         $permissions = $user->getAllPermissions();
 
-        $this->assertCount(1, $permissions->filter(fn(Permission $permission) => $permission->name === PermissionEnum::VIEWPWMEMBERREPORT->value));
+        $this->assertCount(1, $permissions->filter(fn (Permission $permission) => $permission->name === PermissionEnum::VIEWPWMEMBERREPORT->value));
         $this->assertContainsOnlyUniqueValues($permissions);
     }
 
@@ -37,15 +35,12 @@ class UserTest extends TestCase
             ->create();
 
         $permissions = $user->getAllPermissions();
-        $this->assertCount(1, $permissions->filter(fn(Permission $permission) => $permission->name === PermissionEnum::VIEWOWNMEMBER->value));
+        $this->assertCount(1, $permissions->filter(fn (Permission $permission) => $permission->name === PermissionEnum::VIEWOWNMEMBER->value));
         $this->assertContainsOnlyUniqueValues($permissions);
     }
 
     /**
-     * @param callable(): User $user
-     * @param mixed $input
-     * @param bool $expectedResponse
-     * @return void
+     * @param  callable(): User  $user
      */
     #[DataProvider('provideCheckPermission')]
     public function test_check_permissions(callable $user, mixed $input, bool $expectedResponse): void
@@ -53,67 +48,66 @@ class UserTest extends TestCase
         $this->assertEquals($expectedResponse, $user()->checkPermissions($input));
     }
 
-
-    static public function provideCheckPermission(): \Generator
+    public static function provideCheckPermission(): \Generator
     {
         yield [
-            fn() => User::factory()->isPWUser()->create(),
+            fn () => User::factory()->isPWUser()->create(),
             PermissionEnum::VIEWPWMEMBERREPORT,
-            true
+            true,
         ];
 
         yield [
-            fn() => User::factory()->isPWUser()->create(),
+            fn () => User::factory()->isPWUser()->create(),
             collect([PermissionEnum::VIEWPWMEMBERREPORT]),
-            true
+            true,
         ];
 
         yield [
-            fn() => User::factory()->isPWUser()->create(),
+            fn () => User::factory()->isPWUser()->create(),
             [PermissionEnum::VIEWPWMEMBERREPORT],
-            true
+            true,
         ];
 
         yield [
-            fn() => User::factory()->isPWUser()->create(),
+            fn () => User::factory()->isPWUser()->create(),
             collect([PermissionEnum::VIEWPWMEMBERREPORT->value, PermissionEnum::EDITMEMBERS]),
-            true
+            true,
         ];
 
         yield [
-            fn() => User::factory()->isPWUser()->create(),
+            fn () => User::factory()->isPWUser()->create(),
             [PermissionEnum::VIEWPWMEMBERREPORT->value, PermissionEnum::EDITMEMBERS],
-            true
+            true,
         ];
 
         yield [
-            fn() => User::factory()->has(Member::factory()->isTrustee())->create(),
+            fn () => User::factory()->has(Member::factory()->isTrustee())->create(),
             PermissionEnum::EDITMEMBERS,
-            true
+            true,
         ];
 
         yield [
-            fn() => User::factory()->has(Member::factory()->isMember())->create(),
+            fn () => User::factory()->has(Member::factory()->isMember())->create(),
             PermissionEnum::EDITMEMBERS,
-            false
+            false,
         ];
 
         yield [
-            fn() => User::factory()->create(),
+            fn () => User::factory()->create(),
             [PermissionEnum::VIEWPWMEMBERREPORT],
-            false
+            false,
         ];
 
         yield [
-            fn() => User::factory()->has(Member::factory()->isMember())->create(),
+            fn () => User::factory()->has(Member::factory()->isMember())->create(),
             PermissionEnum::EDITOWNMEMBER,
-            true
+            true,
         ];
 
         yield [
-            fn() => User::factory()->create(),
+            fn () => User::factory()->create(),
             PermissionEnum::EDITOWNMEMBER,
-            false
+            false,
         ];
     }
 }

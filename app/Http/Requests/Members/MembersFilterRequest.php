@@ -8,7 +8,6 @@ use Illuminate\Validation\Rule;
 
 class MembersFilterRequest extends FormRequest
 {
-
     public function rules(): array
     {
         return [

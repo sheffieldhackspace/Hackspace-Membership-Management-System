@@ -5,7 +5,6 @@ namespace Tests\Feature\User;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Gate;
 
 class UserControllerTest extends TestCase
 {
@@ -84,5 +83,4 @@ class UserControllerTest extends TestCase
 
         $this->assertNotNull($user->refresh()->email_verified_at);
     }
-
 }

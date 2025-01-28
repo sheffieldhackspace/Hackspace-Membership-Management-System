@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\MembershipType;
 use App\Models\Member;
 use App\Models\MembershipHistory;
-use App\Enums\MembershipType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,6 +22,7 @@ class MembershipHistoryFactory extends Factory
     public function definition(): array
     {
         $createdAt = $this->faker->dateTimeBetween('-3 year', 'now');
+
         return [
             'member_id' => Member::factory(),
             'membership_type' => $this->faker->randomElement(MembershipType::cases()),

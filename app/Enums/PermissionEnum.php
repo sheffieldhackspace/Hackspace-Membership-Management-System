@@ -4,7 +4,6 @@ namespace App\Enums;
 
 enum PermissionEnum: string
 {
-
     case VIEWUSERS = 'view-users';
     case VIEWOWNUSER = 'view-user';
     case EDITUSERS = 'edit-users';
