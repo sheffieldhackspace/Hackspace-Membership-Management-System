@@ -1,4 +1,4 @@
-name: Fix Code Style
+name: Run PHPStan
 
 on:
   push:
