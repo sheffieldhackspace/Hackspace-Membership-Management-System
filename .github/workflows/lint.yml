@@ -4,6 +4,9 @@ on:
   push:
     branches-ignore:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   lint:
@@ -25,11 +28,16 @@ jobs:
           coverage: none
 
       - name: Install Pint
-        run: composer global require laravel/pint
+        run: composer install --dev
 
       - name: Run Pint
-        run: pint
+        run: composer run lint
+        if: github.event_name == 'pull_request'
+
+      - name: Run Pint
+        run: composer run lint:fix
+        if: github.event_name == 'push'
 
       - name: Commit linted files
         uses: stefanzweifel/git-auto-commit-action@v5
-
+        if: github.event_name == 'push'
