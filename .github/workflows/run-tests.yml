@@ -41,14 +41,13 @@ jobs:
 
       - name: Prepare Laravel Application
         run: |
-          cp .env.ci .env
           php artisan migrate --env=ci
-          php artisan key:generate
-          php artisan typescript:transform
+          php artisan key:generate --env=ci
+          php artisan typescript:transform --env=ci
 
       - name: Execute tests
         run : |
-          php artisan test --env=testing --coverage-clover=coverage/all/cobertura.xml
+          php artisan test --env=ci --coverage-clover=coverage/all/cobertura.xml
 
       - name: Upload application
         uses: actions/upload-artifact@v4
