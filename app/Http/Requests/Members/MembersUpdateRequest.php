@@ -29,12 +29,12 @@ class MembersUpdateRequest extends FormRequest
             'emailAddresses.*.isPrimary' => ['required', 'boolean'],
             'emailAddresses' => ['required', 'array', new OnePrimaryEmailAddress, 'min:1'],
             'postalAddress' => ['nullable', 'array'],
-            'postalAddress.line1' => ['string', 'required_with:postalAddress', 'max:255'],
+            'postalAddress.line1' => ['required_with:postalAddress', 'string', 'max:255'],
             'postalAddress.line2' => ['string', 'nullable', 'max:255'],
             'postalAddress.line3' => ['string', 'nullable', 'max:255'],
             'postalAddress.city' => ['string', 'nullable', 'max:255'],
             'postalAddress.county' => ['string', 'nullable', 'max:255'],
-            'postalAddress.postcode' => ['string', 'required_with:postalAddress', 'max:255'],
+            'postalAddress.postcode' => ['required_with:postalAddress', 'string', 'max:255'],
             'membershipType' => [
                 'required',
                 Rule::enum(MembershipType::class),
@@ -69,6 +69,33 @@ class MembersUpdateRequest extends FormRequest
                 'trustee' => $member->getIsActiveTrustee(),
             ]);
         }
+    }
 
+    public function messages(): array
+    {
+        return [
+            'postalAddress.line1.required_with' => 'Address Line 1 is required',
+            'postalAddress.postcode.required_with' => 'A postcode is required',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'name' => 'name',
+            'knownAs' => 'known as',
+            'emailAddresses.*.emailAddress' => 'email address',
+            'emailAddresses.*.isPrimary' => 'primary email Address',
+            'emailAddresses' => 'email addresses',
+            'postalAddress' => 'address',
+            'postalAddress.line1' => 'address line 1',
+            'postalAddress.line2' => 'address line 2',
+            'postalAddress.line3' => 'address line 3',
+            'postalAddress.city' => 'city',
+            'postalAddress.county' => 'county',
+            'postalAddress.postcode' => 'postcode',
+            'membershipType' => 'membership type',
+            'trustee' => 'trustee',
+        ];
     }
 }

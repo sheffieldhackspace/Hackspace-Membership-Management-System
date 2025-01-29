@@ -4,13 +4,14 @@ namespace App\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 class OnePrimaryEmailAddress implements ValidationRule
 {
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  Closure(string, ?string=): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -21,7 +22,7 @@ class OnePrimaryEmailAddress implements ValidationRule
 
         if ($primaryEmailAddressCount != 1) {
             $fail(
-                'You must have exactly one primary email address'
+                'Only one primary email address allowed'
             );
         }
     }
