@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  eslint:
+  build-vue:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
