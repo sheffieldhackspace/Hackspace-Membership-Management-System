@@ -25,3 +25,6 @@ yarn-error.log
 #Generated Files
 resources/js/types/generated.d.ts
 resources/js/ziggy.js
+
+#Coverage reports
+coverage

@@ -79,6 +79,9 @@
         ],
         "lint:fix": [
             "@php vendor/bin/pint"
+        ],
+        "coverage": [
+            "php artisan test --coverage-html coverage"
         ]
     },
     "extra": {
