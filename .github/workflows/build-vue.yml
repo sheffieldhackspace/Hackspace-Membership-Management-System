@@ -1,4 +1,4 @@
-name: Build Vue
+name: Build Front End
 
 on:
   push:
@@ -19,6 +19,28 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: zip, pcntl, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, imagick, redis
+
+      - name: Run composer install
+        run: composer install -n --prefer-dist
+
+      - name: Prepare Laravel Application
+        run: |
+          php artisan key:generate --env=ci
+          php artisan typescript:transform --env=ci
+          php artisan ziggy:generate --env=ci
+
       - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
