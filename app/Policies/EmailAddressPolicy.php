@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\EmailAddress;
-use App\Models\PostalAddress;
 use App\Models\User;
 
 class EmailAddressPolicy

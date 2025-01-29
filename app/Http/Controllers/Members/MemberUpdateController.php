@@ -34,12 +34,15 @@ class MemberUpdateController extends Controller
             );
         }
 
-        $emailAddressData = collect($request->get('emailAddresses'));
-        $member->emailAddresses()->whereNotIn('id', $emailAddressData->pluck('id'))->delete();
+        $emailAddressData = collect($validated['emailAddresses']);
+        $member->emailAddresses()->whereNotIn('email_address', $emailAddressData->pluck('emailAddress'))->delete();
 
         $emailAddressData->each(function ($emailAddress) use ($member) {
             $member->emailAddresses()->updateOrCreate(
-                ['id' => $emailAddress['id']],
+                [
+                    'member_id' => $member->id,
+                    'email_address' => $emailAddress['emailAddress'],
+                ],
                 [
                     'member_id' => $member->id,
                     'email_address' => $emailAddress['emailAddress'],
@@ -48,17 +51,13 @@ class MemberUpdateController extends Controller
             );
         });
 
-        $membershipType = $request->get('membershipType');
-        if ($membershipType !== null) {
-            $membershipType = MembershipType::from($membershipType);
-
-            if ($membershipType != $member->getMembershipType()) {
-                $member->setMembershipType($membershipType);
-            }
+        $membershipType = MembershipType::from($request->get('membershipType'));
+        if ($membershipType !== $member->getMembershipType()) {
+            $member->setMembershipType($membershipType);
         }
 
         $trusteeValue = $request->get('trustee');
-        if ($trusteeValue !== null && $trusteeValue !== $member->getIsActiveTrustee()) {
+        if ($trusteeValue !== $member->getIsActiveTrustee()) {
             if ($trusteeValue) {
                 $member->trusteeHistory()->create([
                     'member_id' => $member->id,
