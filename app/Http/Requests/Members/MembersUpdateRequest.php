@@ -13,13 +13,21 @@ class MembersUpdateRequest extends FormRequest
 {
     public function rules(): array
     {
+        /** @var ?Member $member */
+        $member = $this->route('member');
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'knownAs' => ['required', 'string', 'max:255'],
-            'emailAddresses' => ['required', 'array', new OnePrimaryEmailAddress, 'min:1'],
-            'emailAddresses.*.id' => ['nullable', 'string', 'max:255'],
-            'emailAddresses.*.emailAddress' => ['required', 'email', 'unique:email_addresses', 'max:255'],
+            'emailAddresses.*.emailAddress' => [
+                'required',
+                'email',
+                'distinct',
+                Rule::unique('email_addresses', 'email_address')->ignore($member?->id, 'member_id'),
+                'max:255',
+            ],
             'emailAddresses.*.isPrimary' => ['required', 'boolean'],
+            'emailAddresses' => ['required', 'array', new OnePrimaryEmailAddress, 'min:1'],
             'postalAddress' => ['nullable', 'array'],
             'postalAddress.line1' => ['string', 'required_with:postalAddress', 'max:255'],
             'postalAddress.line2' => ['string', 'nullable', 'max:255'],
@@ -38,10 +46,10 @@ class MembersUpdateRequest extends FormRequest
         ];
     }
 
-    protected function passedValidation(): void
+    protected function prepareForValidation(): void
     {
-        if ($this->exists('postalAddress')) {
-            $this->replace([
+        if (! $this->exists('postalAddress')) {
+            $this->merge([
                 'postalAddress.line1' => $this->get('postalAddress.line1', ''),
                 'postalAddress.line2' => $this->get('postalAddress.line2', ''),
                 'postalAddress.line3' => $this->get('postalAddress.line3', ''),
@@ -56,9 +64,9 @@ class MembersUpdateRequest extends FormRequest
         $member = Member::find($this->route('member'))->firstOrFail();
 
         if ($user->cant('changeMembershipType', $member)) {
-            $this->replace([
-                'membershipType' => null,
-                'trustee' => null,
+            $this->merge([
+                'membershipType' => $member->getMembershipType()->value,
+                'trustee' => $member->getIsActiveTrustee(),
             ]);
         }
 

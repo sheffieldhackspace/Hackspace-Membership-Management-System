@@ -49,19 +49,22 @@ const showingNavigationDropdown = ref(false);
                                     Members
                                 </NavLink>
 
-<!--                                <NavLink-->
-<!--                                    :href="route('users')"-->
-<!--                                    :active="route().current('users')"-->
-<!--                                >-->
-<!--                                    Users-->
-<!--                                </NavLink>-->
+                                <!--                                <NavLink-->
+                                <!--                                    :href="route('users')"-->
+                                <!--                                    :active="route().current('users')"-->
+                                <!--                                >-->
+                                <!--                                    Users-->
+                                <!--                                </NavLink>-->
                             </div>
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
                             <!-- Settings Dropdown -->
                             <div class="relative ms-3">
-                                <Dropdown align="right" width="48">
+                                <Dropdown
+                                    align="right"
+                                    width="48"
+                                >
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <button
@@ -107,11 +110,11 @@ const showingNavigationDropdown = ref(false);
                         <!-- Hamburger -->
                         <div class="-me-2 flex items-center sm:hidden">
                             <button
+                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
                                 @click="
                                     showingNavigationDropdown =
                                         !showingNavigationDropdown
                                 "
-                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
                             >
                                 <svg
                                     class="h-6 w-6"
@@ -169,7 +172,6 @@ const showingNavigationDropdown = ref(false);
                         class="border-t border-gray-200 pb-1 pt-4"
                     >
                         <div class="px-4">
-
                             <div class="text-sm font-medium text-gray-500">
                                 {{ user.emailAddress }}
                             </div>
@@ -193,8 +195,8 @@ const showingNavigationDropdown = ref(false);
 
             <!-- Page Heading -->
             <header
-                class="bg-white shadow"
                 v-if="$slots.header"
+                class="bg-white shadow"
             >
                 <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                     <slot name="header" />

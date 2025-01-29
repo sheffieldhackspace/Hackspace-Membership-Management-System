@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -20,6 +21,7 @@ use Tests\TestCase;
 class MemberUpdateControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use withFaker;
 
     #[DataProvider('provideNameUserMemberData')]
     public function test_can_update_members_name(Closure $getUserAndMember): void
@@ -117,6 +119,174 @@ class MemberUpdateControllerTest extends TestCase
                 'postcode' => $memberAddress->postcode,
             ]);
         }
+    }
+
+    #[DataProvider('provideEmailAddressUserMemberData')]
+    public function test_can_create_update_and_remove_a_email_address_for_the_member(Closure $getUserAndMember): void
+    {
+        /**
+         * @var User $user
+         * @var Member $member
+         */
+        [$user, $member] = $getUserAndMember();
+        $this->actingAs($user);
+
+        $primaryEmailAddress = $member->emailAddresses->first()->email_address ?? $this->faker->email;
+        $passedEmailAddresses = [
+            [
+                'emailAddress' => $primaryEmailAddress,
+                'isPrimary' => true,
+            ],
+            [
+                'emailAddress' => $this->faker->email,
+                'isPrimary' => false,
+            ],
+        ];
+
+        $data = $this->getData($member,
+            [
+                'emailAddresses' => $passedEmailAddresses,
+            ]);
+
+        $response = $this->patch(route('member.update', [$member->id]), $data);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('members', ['id' => $member->id]);
+        $emailAddressQuery = EmailAddress::whereMemberId($member->id);
+
+        $this->assertEquals(2, $emailAddressQuery->count(), 'Two email addresses are expected');
+
+        $newEmailAddresses = $emailAddressQuery->get();
+        $passedEmailAddresses = collect($passedEmailAddresses);
+
+        $this->assertContainsOnlyUniqueValues($newEmailAddresses->pluck('email_address'));
+        $this->assertEquals($passedEmailAddresses->pluck('emailAddress'), $newEmailAddresses->pluck('email_address'));
+
+        $this->assertTrue($newEmailAddresses->filter(fn (EmailAddress $emailAddress) => $emailAddress->email_address === $primaryEmailAddress)->first()->is_primary);
+    }
+
+    public function test_cant_add_duplicate_email_addresses_for_the_member(): void
+    {
+        $user = User::factory()->isAdmin()->create();
+        $member = Member::factory()
+            ->isMember()
+            ->create(['user_id' => $user->id]);
+        $this->actingAs($user);
+
+        $duplicateEmail = $this->faker->email;
+        $passedEmailAddresses = [
+            [
+                'emailAddress' => $duplicateEmail,
+                'isPrimary' => true,
+            ],
+            [
+                'emailAddress' => $duplicateEmail,
+                'isPrimary' => false,
+            ],
+        ];
+
+        $data = $this->getData($member,
+            [
+                'emailAddresses' => $passedEmailAddresses,
+            ]);
+
+        $response = $this->patch(route('member.update', [$member->id]), $data);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('emailAddresses.0.emailAddress');
+        $response->assertSessionHasErrors('emailAddresses.1.emailAddress');
+    }
+
+    public function test_cant_set_multiple_primary_email_addresses_for_the_member(): void
+    {
+        $user = User::factory()->isAdmin()->create();
+        $member = Member::factory()
+            ->isMember()
+            ->create(['user_id' => $user->id]);
+        $this->actingAs($user);
+
+        $passedEmailAddresses = [
+            [
+                'emailAddress' => $this->faker->email,
+                'isPrimary' => true,
+            ],
+            [
+                'emailAddress' => $this->faker->email,
+                'isPrimary' => true,
+            ],
+        ];
+
+        $data = $this->getData($member,
+            [
+                'emailAddresses' => $passedEmailAddresses,
+            ]);
+
+        $response = $this->patch(route('member.update', [$member->id]), $data);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('emailAddresses');
+    }
+
+    public function test_must_set_a_primary_email_addresses_for_the_member(): void
+    {
+        $user = User::factory()->isAdmin()->create();
+        $member = Member::factory()
+            ->isMember()
+            ->create(['user_id' => $user->id]);
+        $this->actingAs($user);
+
+        $passedEmailAddresses = [
+            [
+                'emailAddress' => $this->faker->email,
+                'isPrimary' => false,
+            ],
+            [
+                'emailAddress' => $this->faker->email,
+                'isPrimary' => false,
+            ],
+        ];
+
+        $data = $this->getData($member,
+            [
+                'emailAddresses' => $passedEmailAddresses,
+            ]);
+
+        $response = $this->patch(route('member.update', [$member->id]), $data);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('emailAddresses');
+    }
+
+    public function test_cannot_use_a_email_addresses_in_use_by_another_member(): void
+    {
+        $user = User::factory()->isAdmin()->create();
+        $member = Member::factory()
+            ->isMember()
+            ->create(['user_id' => $user->id]);
+        $this->actingAs($user);
+
+        $emailAddress = $this->faker->email;
+        Member::factory()
+            ->isMember()
+            ->has(EmailAddress::factory(['email_address' => $emailAddress])->primary())
+            ->create(['user_id' => $user->id]);
+
+        $passedEmailAddresses = [
+            [
+                'emailAddress' => $emailAddress,
+                'isPrimary' => true,
+            ],
+        ];
+
+        $data = $this->getData($member,
+            [
+                'emailAddresses' => $passedEmailAddresses,
+            ]);
+
+        $response = $this->patch(route('member.update', [$member->id]), $data);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('emailAddresses.0.emailAddress');
     }
 
     public function test_non_admin_and_non_associated_user_cannot_update_member(): void
@@ -295,6 +465,71 @@ class MemberUpdateControllerTest extends TestCase
         ];
     }
 
+    public static function provideEmailAddressUserMemberData(): iterable
+    {
+        yield [
+            function (): array {
+                return [
+                    User::factory()->isAdmin()->create(),
+                    Member::factory()->create(),
+                ];
+            },
+        ];
+        yield [
+            function (): array {
+                return [
+                    User::factory()->isAdmin()->create(),
+                    Member::factory()->has(EmailAddress::factory())->create(),
+                ];
+            },
+        ];
+        yield [
+            function (): array {
+                return [
+                    User::factory()->isAdmin()->create(),
+                    Member::factory()
+                        ->has(EmailAddress::factory()->primary())
+                        ->has(EmailAddress::factory())
+                        ->create(),
+                ];
+            },
+        ];
+        yield [
+            function (): array {
+                $user = User::factory()->create();
+
+                return [
+                    $user,
+                    Member::factory(['user_id' => $user->id])->isMember()->create(),
+                ];
+            },
+        ];
+        yield [
+            function (): array {
+                $user = User::factory()->create();
+
+                return [
+                    $user,
+                    Member::factory(['user_id' => $user->id])->isMember()->has(EmailAddress::factory())->create(),
+                ];
+            },
+        ];
+        yield [
+            function (): array {
+                $user = User::factory()->create();
+
+                return [
+                    $user,
+                    Member::factory(['user_id' => $user->id])
+                        ->isMember()
+                        ->has(EmailAddress::factory()->primary())
+                        ->has(EmailAddress::factory())
+                        ->create(),
+                ];
+            },
+        ];
+    }
+
     private function getData(Member $member, $data): array
     {
 
@@ -303,7 +538,6 @@ class MemberUpdateControllerTest extends TestCase
             'knownAs' => $member->known_as,
             'emailAddresses' => $member->emailAddresses->map(function (EmailAddress $emailAddress) {
                 return [
-                    'id' => $emailAddress->id,
                     'emailAddress' => $emailAddress->email_address,
                     'isPrimary' => $emailAddress->is_primary,
                 ];

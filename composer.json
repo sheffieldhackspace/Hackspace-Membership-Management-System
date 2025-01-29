@@ -8,7 +8,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
@@ -30,6 +30,7 @@
         "laravel/breeze": "^2.3",
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.20",
+        "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.1",
         "phpstan/phpstan-phpunit": "^2.0",
@@ -67,6 +68,9 @@
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
         ],
+        "test": [
+            "@php artisan test --parallel --env=testing"
+        ],
         "stan": [
             "phpstan analyse --memory-limit=2G --configuration=phpstan.neon"
         ],
@@ -75,6 +79,9 @@
         ],
         "lint:fix": [
             "@php vendor/bin/pint"
+        ],
+        "coverage": [
+            "php artisan test --coverage-html coverage"
         ]
     },
     "extra": {
