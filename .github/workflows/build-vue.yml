@@ -37,7 +37,6 @@ jobs:
 
       - name: Prepare Laravel Application
         run: |
-          php artisan key:generate --env=ci
           php artisan typescript:transform --env=ci
           php artisan ziggy:generate --env=ci
 
