@@ -44,6 +44,15 @@ jobs:
           php artisan migrate --env=ci
           php artisan key:generate --env=ci
           php artisan typescript:transform --env=ci
+          php artisan ziggy:generate --env=ci
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm install
+      - run: npm run build --if-present
 
       - name: Execute tests
         run : |
