@@ -21,7 +21,7 @@
                 <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
                     <h3 class="text-l font-semibold leading-tight text-gray-800 mb-2">Email Addresses</h3>
                      <ul>
-                        <li v-for="email in member.emailAddresses" :key="email.id">
+                        <li v-for="email in member.emailAddresses">
                           {{ email.emailAddress }} <span v-if="email.isPrimary">(Primary)</span>
                         </li>
                       </ul>
