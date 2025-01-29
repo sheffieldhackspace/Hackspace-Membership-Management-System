@@ -41,7 +41,8 @@ export default [
         },
 		rules: {
 			"vue/html-indent": ["error", 4],
-			"vue/multi-word-component-names": ["off"]
+			"vue/multi-word-component-names": ["off"],
+			"no-console": ["error"],
 		}
 	}
 ];

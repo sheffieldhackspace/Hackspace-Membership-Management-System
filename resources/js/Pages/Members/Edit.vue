@@ -69,7 +69,7 @@
 
                     <template
                         v-for="(email, index) in form.emailAddresses"
-                        :key="email.id"
+                        :key="email.emailAddress"
                     >
                         <div class="col-span-1 content-center">
                             <InputLabel
@@ -83,6 +83,10 @@
                                 v-model="email.emailAddress"
                                 type="email"
                                 class="mt-1 block w-full rounded border-gray-200"
+                            />
+                            <InputError
+                                :message="$page.props.errors[`emailAddresses.${index}.emailAddress`]"
+                                class="mt-2"
                             />
                         </div>
                         <div class="col-span-1 content-center items-center flex">
@@ -126,6 +130,10 @@
                             type="text"
                             class="mt-1 block w-full"
                         />
+                        <InputError
+                            :message="$page.props.errors[`postalAddress.line1`]"
+                            class="mt-2"
+                        />
                     </div>
                     <div class="col-span-1 content-center">
                         <InputLabel
@@ -139,6 +147,10 @@
                             v-model="form.postalAddress.line2"
                             type="text"
                             class="mt-1 block w-full"
+                        />
+                        <InputError
+                            :message="$page.props.errors[`postalAddress.line2`]"
+                            class="mt-2"
                         />
                     </div>
                     <div class="col-span-1 content-center">
@@ -154,6 +166,10 @@
                             type="text"
                             class="mt-1 block w-full"
                         />
+                        <InputError
+                            :message="$page.props.errors[`postalAddress.line3`]"
+                            class="mt-2"
+                        />
                     </div>
                     <div class="col-span-1 content-center">
                         <InputLabel
@@ -167,6 +183,10 @@
                             v-model="form.postalAddress.city"
                             type="text"
                             class="mt-1 block w-full"
+                        />
+                        <InputError
+                            :message="$page.props.errors[`postalAddress.city`]"
+                            class="mt-2"
                         />
                     </div>
                     <div class="col-span-1 content-center">
@@ -182,6 +202,10 @@
                             type="text"
                             class="mt-1 block w-full"
                         />
+                        <InputError
+                            :message="$page.props.errors[`postalAddress.county`]"
+                            class="mt-2"
+                        />
                     </div>
                     <div class="col-span-1 content-center">
                         <InputLabel
@@ -195,6 +219,10 @@
                             v-model="form.postalAddress.postcode"
                             type="text"
                             class="mt-1 block w-full"
+                        />
+                        <InputError
+                            :message="$page.props.errors[`postalAddress.postcode`]"
+                            class="mt-2"
                         />
                     </div>
 
@@ -282,10 +310,17 @@ const props = defineProps< {
     canChangeMembershipType: boolean
 }>();
 
+const emailAddresses = props.member.emailAddresses?.map(email => {
+    return {
+        emailAddress: email.emailAddress,
+        isPrimary: email.isPrimary,
+    }
+});
+
 const form = useForm({
     name: props.member.name,
     knownAs: props.member.knownAs,
-    emailAddresses: props.member.emailAddresses,
+    emailAddresses: emailAddresses,
     postalAddress: {
         line1: props.member.postalAddress?.line1 ?? '',
         line2: props.member.postalAddress?.line2 ?? '',
@@ -299,7 +334,6 @@ const form = useForm({
 });
 
 const updateMember = () => {
-    console.log(form.data());
     form.patch(route('member.update', props.member.id));
 };
 
@@ -308,11 +342,8 @@ const addEmailAddress = () => {
         form.emailAddresses = [];
     }
     form.emailAddresses.push({
-        id: null,
-        memberId: props.member.id,
         emailAddress: '',
         isPrimary: false,
-        verifiedAt: null
     });
 }
 
