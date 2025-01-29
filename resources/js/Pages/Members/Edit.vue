@@ -136,7 +136,6 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import MemberData = App.Data.MemberData;
 import MembershipTypeData = App.Data.MembershipTypeData;
 import { Head } from '@inertiajs/vue3';
-import HasPermission from "@/Components/HasPermission.vue";
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from "@/Components/TextInput.vue";
 import Checkbox from "@/Components/Checkbox.vue";
