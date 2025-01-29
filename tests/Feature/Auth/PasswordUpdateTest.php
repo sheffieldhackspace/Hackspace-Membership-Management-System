@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
