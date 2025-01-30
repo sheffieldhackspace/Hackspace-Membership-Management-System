@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Exceptions\UnauthorizedException;
+use App\Exceptions\DiscordAuthenticationException;
 use App\Http\Controllers\Controller;
+use App\Services\Discord\DiscordProvider;
 use App\Services\Discord\DiscordUser;
 use Illuminate\Http\RedirectResponse;
 use Laravel\Socialite\Facades\Socialite;
-use MartinBean\Laravel\Socialite\DiscordProvider;
 
 class DiscordController extends Controller
 {
@@ -17,7 +17,7 @@ class DiscordController extends Controller
     public function redirect(): RedirectResponse
     {
         /** @var DiscordProvider $driver */
-        $driver = Socialite::driver('discord-with-guilds');
+        $driver = Socialite::driver('discord');
 
         return $driver
             ->redirect();
@@ -29,16 +29,16 @@ class DiscordController extends Controller
     public function callback()
     {
         /** @var DiscordProvider $driver */
-        $driver = Socialite::driver('discord-with-guilds');
+        $driver = Socialite::driver('discord');
 
         /** @var DiscordUser $user */
         $user = $driver
             ->user();
 
         if ($user->isUserInGuild(config('services.discord.guild_id'))) {
-            // Authentication passed...
+            $user->saveUserInSession();
         } else {
-            throw UnauthorizedException::notInDiscordGuild();
+            throw DiscordAuthenticationException::notInDiscordGuild(config('services.discord.guild_id'));
         }
     }
 }

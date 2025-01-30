@@ -14,7 +14,6 @@
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
-        "martinbean/socialite-discord-provider": "^1.2",
         "spatie/laravel-data": "^4.11",
         "spatie/laravel-model-states": "^2.10",
         "spatie/laravel-permission": "^6.10",

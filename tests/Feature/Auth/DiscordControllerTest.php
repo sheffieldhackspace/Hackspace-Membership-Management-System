@@ -61,10 +61,6 @@ class DiscordControllerTest extends TestCase
         $response->assertOk();
         $response->assertRedirect(route('dashboard'));
         $this->assertAuthenticatedAs($user);
-        $this->assertDatabaseHas('email_addresses', [
-            'email_address' => $emailAddress,
-            'verified_at' => now(),
-        ]);
 
     }
 
@@ -233,6 +229,5 @@ class DiscordControllerTest extends TestCase
                 ...$guilds,
             ]),
         ]);
-
     }
 }

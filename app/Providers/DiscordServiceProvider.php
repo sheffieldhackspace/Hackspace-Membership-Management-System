@@ -18,7 +18,7 @@ class DiscordServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Socialite::extend('discord-with-guilds', function (Application $app) {
+        Socialite::extend('discord', function (Application $app) {
             $config = $app->make('config')->get('services.discord');
 
             $redirect = value(Arr::get($config, 'redirect'));

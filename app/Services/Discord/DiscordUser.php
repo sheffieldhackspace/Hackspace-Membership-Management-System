@@ -2,6 +2,7 @@
 
 namespace App\Services\Discord;
 
+use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User;
 
 class DiscordUser extends User
@@ -35,6 +36,23 @@ class DiscordUser extends User
     public function isUserInGuild(string $guild): bool
     {
         return array_any($this->guilds, fn($userGuild) => $userGuild['id'] === $guild);
+    }
 
+    public function saveUserInSession(): void
+    {
+        session(['discord_user_token' => $this->token]);
+    }
+
+    public static function getUserFromSession(): ?DiscordUser
+    {
+        $token = session('discord_user_token');
+        if ($token === null) {
+            return null;
+        }
+
+        /** @var DiscordProvider $driver */
+        $driver = Socialite::driver('discord-with-guilds');
+
+        return $driver->getUserByToken($token);
     }
 }
