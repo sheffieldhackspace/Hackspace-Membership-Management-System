@@ -13,6 +13,7 @@ use Laravel\Socialite\Two\ProviderInterface;
 /**
  * Discord OAuth2 Provider.
  * Based on martinbean/socialite-discord-provider but modified so much it made little sense to require and then extend the original.
+ * @method SocialiteDiscordUser user()
  * @see https://github.com/martinbean/socialite-discord-provider Origial package this was based on
  * @see https://discord.com/developers/docs/topics/oauth2#authorization-url Discord OAuth2 documentation
  */
@@ -33,25 +34,18 @@ class DiscordProvider extends AbstractProvider implements ProviderInterface
         $this->redirectUrl(route('discord.callback', [], true));
     }
 
-    /**
-     * Create a new bot redirect.
-     *
-     * @return BotRedirectBuilder
-     */
-    public function bot()
+    public function bot(): BotRedirectBuilder
     {
         return new BotRedirectBuilder($this->clientId);
     }
 
-    protected function getAuthUrl($state)
+    protected function getAuthUrl($state): string
     {
         return $this->buildAuthUrlFromBase('https://discord.com/api/oauth2/authorize', $state);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getTokenUrl()
+
+    protected function getTokenUrl(): string
     {
         return 'https://discord.com/api/oauth2/token';
     }
@@ -64,7 +58,7 @@ class DiscordProvider extends AbstractProvider implements ProviderInterface
      * @return array
      * @throws DiscordAuthenticationException
      */
-    public function getUserByToken($token): array
+    protected function getUserByToken($token): array
     {
         try {
             $userUrl = 'https://discord.com/api/users/@me';
@@ -93,16 +87,17 @@ class DiscordProvider extends AbstractProvider implements ProviderInterface
      * Maps the user array to a DiscordUser object.
      *
      * @param array $user
-     * @return DiscordUser
+     * @return SocialiteDiscordUser
      */
-    protected function mapUserToObject(array $user)
+    protected function mapUserToObject(array $user): SocialiteDiscordUser
     {
-        return new DiscordUser()->setRaw($user)->map([
+        return new SocialiteDiscordUser()->setRaw($user)->map([
             'id' => $user['id'],
             'name' => $user['username'],
             'nickname' => $user['global_name'],
             'email' => $user['email'] ?? null,
             'avatar' => sprintf('https://cdn.discordapp.com/avatars/%s/%s.png', $user['id'], $user['avatar']),
+            'avatar_hash' => $user['avatar'],
             'guilds' => $user['guilds'],
             'verified' => $user['verified'],
         ]);
@@ -117,14 +112,6 @@ class DiscordProvider extends AbstractProvider implements ProviderInterface
             'grant_type' => 'authorization_code',
             'redirect_uri' => $this->redirectUrl,
         ];
-    }
-
-    public function user(): DiscordUser
-    {
-        /** @var DiscordUser $user */
-        $user = parent::user();
-
-        return $user;
     }
 
     /**

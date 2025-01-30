@@ -8,7 +8,7 @@ use App\Models\Member;
 use App\Models\User;
 use App\Providers\DiscordServiceProvider;
 use App\Services\Discord\DiscordProvider;
-use App\Services\Discord\DiscordUser;
+use App\Services\Discord\SocialiteDiscordUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
@@ -19,7 +19,7 @@ use Tests\TestCase;
 #[CoversClass(DiscordController::class)]
 #[CoversClass(DiscordServiceProvider::class)]
 #[CoversClass(DiscordProvider::class)]
-#[CoversClass(DiscordUser::class)]
+#[CoversClass(SocialiteDiscordUser::class)]
 class DiscordControllerTest extends TestCase
 {
     use RefreshDatabase;
