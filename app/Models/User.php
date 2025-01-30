@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
-use App\Events\TrusteeHistoryChangedEvent;
+use App\Enums\PermissionEnum;
 use App\Events\UserCreatedEvent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * 
- *
  * @property string $id
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
@@ -29,6 +28,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
  * @property-read int|null $roles_count
+ *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
@@ -44,28 +44,21 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutPermission($permissions)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutRole($roles, $guard = null)
+ *
  * @mixin \Eloquent
  */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasUuids, HasRoles;
+    use HasFactory, HasRoles, HasUuids, Notifiable {
+        getAllPermissions as protected traitGetAllPermissions;
+    }
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'email',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
@@ -95,13 +88,32 @@ class User extends Authenticatable
         return $this->hasMany(Member::class);
     }
 
-    public function membersHavePermission(string $permission): bool
+    /**
+     * Check if the user or any of their members has any of the given permissions.
+     * This should be the main way to check permissions for a user.
+     *
+     * @param  array<string|PermissionEnum>|Collection<string|PermissionEnum>|string|PermissionEnum  $permissions
+     */
+    public function checkPermissions(array|Collection|string|PermissionEnum $permissions): bool
     {
-        return $this->members->contains(fn (Member $member) => $member->hasPermissionTo($permission));
+        if (is_string($permissions) || $permissions instanceof PermissionEnum) {
+            $permissions = [$permissions];
+        }
+
+        return $this->hasAnyPermission($permissions) || $this->members->contains(fn (Member $member) => $member->hasAnyPermission($permissions));
     }
 
-    public function membersHaveRole(string $role): bool
+    /**
+     * Get all permissions for the user and their members.
+     *
+     * @return Collection<string>
+     */
+    public function getAllPermissions(): Collection
     {
-        return $this->members->contains(fn (Member $member) => $member->hasRole($role));
+        $memberPermissions = $this->members->map(fn (Member $member) => $member->getAllPermissions())->flatten();
+
+        return $this->traitGetAllPermissions()
+            ->union($memberPermissions)
+            ->unique('name');
     }
 }

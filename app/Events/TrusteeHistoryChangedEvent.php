@@ -16,8 +16,5 @@ class TrusteeHistoryChangedEvent
      */
     public function __construct(
         public TrusteeHistory $trusteeHistory,
-    )
-    { }
-
-
+    ) {}
 }

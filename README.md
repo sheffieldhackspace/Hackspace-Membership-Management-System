@@ -19,8 +19,9 @@ The system will allow:
 - [ ] Trainers to mark members as having attended and/or completed training
 
 ## Documentation
- * [Database](./documentation/database.md)
- * [Permission Model](./documentation/permission-model.md)
+ * [Database](docs/database.md)
+ * [Permission Model](docs/permission-model.md)
+ * [Docker](docs/docker.md)
 
 ## Development
 The backend is built in Laravel 11 and uses a MySQL database we use the following packages:

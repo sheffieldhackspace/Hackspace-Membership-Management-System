@@ -6,8 +6,6 @@ use App\Enums\MembershipType;
 use App\Models\Member;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
@@ -69,9 +67,21 @@ class MemberEditControllerTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
         $member = Member::factory()->create();
+        $member->setMembershipType(MembershipType::MEMBER);
 
-        $response = $this->get(route('member.edit', [$member->id]));
+        $response = $this->get(route('member.update', [$member->id]));
 
         $response->assertStatus(403);
+    }
+
+    public function test_invalid_uuid_returns_404(): void
+    {
+        $this->asAdminUser();
+
+        $invalidUuid = 'invalid-uuid';
+
+        $response = $this->get(route('member.edit', [$invalidUuid]));
+
+        $response->assertStatus(404);
     }
 }

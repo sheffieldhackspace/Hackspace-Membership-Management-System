@@ -1,24 +1,50 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\User;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
-class ProfileTest extends TestCase
+#[CoversClass(\App\Http\Controllers\UserController::class)]
+class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_profile_page_is_displayed(): void
+    public function test_admin_can_view_any_profile_page(): void
     {
+        $adminUser = User::factory()->isAdmin()->create();
         $user = User::factory()->create();
 
         $response = $this
-            ->actingAs($user)
-            ->get('/profile');
+            ->actingAs($adminUser)
+            ->get(route('user.edit', [$user->id]));
 
         $response->assertOk();
+    }
+
+    public function test_user_can_view_their_profile_page(): void
+    {
+        $user = User::factory()->isPWUser()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('user.edit', [$user->id]));
+
+        $response->assertOk();
+    }
+
+    public function test_user_cant_view_other_profile_page(): void
+    {
+        $pwUser = User::factory()->isPWUser()->create();
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($pwUser)
+            ->get(route('user.edit', [$user->id]));
+
+        $response->assertForbidden();
     }
 
     public function test_profile_information_can_be_updated(): void
@@ -27,14 +53,14 @@ class ProfileTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->patch('/profile', [
+            ->patch(route('user.update', [$user->id]), [
                 'name' => 'Test User',
                 'email' => 'test@example.com',
             ]);
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+            ->assertRedirect(route('user.edit', [$user->id]));
 
         $user->refresh();
 
@@ -48,16 +74,15 @@ class ProfileTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->patch('/profile', [
+            ->patch(route('user.update', [$user->id]), [
                 'name' => 'Test User',
                 'email' => $user->email,
             ]);
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+            ->assertRedirect(route('user.edit', [$user->id]));
 
         $this->assertNotNull($user->refresh()->email_verified_at);
     }
-
 }

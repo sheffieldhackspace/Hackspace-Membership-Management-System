@@ -2,19 +2,13 @@
 
 namespace Tests;
 
-use App\Enums\MembershipType;
-use App\Enums\RolesEnum;
-use App\Models\EmailAddress;
-use App\Models\Member;
-use App\Models\MembershipHistory;
-use App\Models\PostalAddress;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -23,29 +17,18 @@ abstract class TestCase extends BaseTestCase
 
     public function asAdminUser(): User
     {
-        $user = User::factory([])
-            ->has(Member::factory([
-                'name' => 'Admin User',
-                'known_as' => 'Admin',
-            ])
-                ->has(MembershipHistory::factory([
-                    'membership_type' => MembershipType::KEYHOLDER,
-                ]))
-                ->isTrustee()
-            )->create();
+        $user = User::factory()->isAdmin()->create();
         $this->actingAs($user);
 
         return $user;
     }
 
-    public function asPWUser(): User
+    /**
+     * Asserts that the given value only contains unique values
+     */
+    public function assertContainsOnlyUniqueValues(iterable $iterable): void
     {
-        $user = User::factory()
-            ->create();
-        $this->actingAs($user);
-
-        $user->assignRole(RolesEnum::PWUSER);
-
-        return $user;
+        $array = is_array($iterable) ? $iterable : iterator_to_array($iterable);
+        assert(count($array) === count(array_unique($array)), 'Array contains duplicate values');
     }
 }

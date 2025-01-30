@@ -5,25 +5,24 @@ namespace App\Models;
 use App\Enums\MembershipType;
 use App\Events\MemberCreatedEvent;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-
 /**
- *
- *
  * @property string $id
  * @property string|null $user_id
  * @property string $name
  * @property string $known_as
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EmailAddress> $emailAddresses
  * @property-read int|null $email_addresses_count
  * @property-read \App\Models\MembershipHistory|null $latestMembershipHistory
@@ -42,28 +41,35 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TrusteeHistory> $trusteeHistory
  * @property-read int|null $trustee_history_count
  * @property-read \App\Models\User|null $user
+ *
  * @method static \Database\Factories\MemberFactory factory($count = null, $state = [])
  * @method static Builder<static>|Member hasActiveMembership()
  * @method static Builder<static>|Member isTrustee()
  * @method static Builder<static>|Member membershipType(\App\Enums\MembershipType $membershipType)
  * @method static Builder<static>|Member newModelQuery()
  * @method static Builder<static>|Member newQuery()
+ * @method static Builder<static>|Member onlyTrashed()
  * @method static Builder<static>|Member permission($permissions, $without = false)
  * @method static Builder<static>|Member query()
  * @method static Builder<static>|Member role($roles, $guard = null, $without = false)
  * @method static Builder<static>|Member whereCreatedAt($value)
+ * @method static Builder<static>|Member whereDeletedAt($value)
  * @method static Builder<static>|Member whereId($value)
  * @method static Builder<static>|Member whereKnownAs($value)
  * @method static Builder<static>|Member whereName($value)
  * @method static Builder<static>|Member whereUpdatedAt($value)
  * @method static Builder<static>|Member whereUserId($value)
+ * @method static Builder<static>|Member withTrashed()
  * @method static Builder<static>|Member withoutPermission($permissions)
  * @method static Builder<static>|Member withoutRole($roles, $guard = null)
+ * @method static Builder<static>|Member withoutTrashed()
+ *
  * @mixin \Eloquent
  */
 class Member extends Model
 {
-    use HasFactory, Notifiable, HasUuids, HasRoles;
+    use HasFactory, HasRoles, HasUuids, Notifiable, SoftDeletes;
+
     protected $fillable = [
         'name',
         'known_as',
@@ -120,10 +126,10 @@ class Member extends Model
         return $this->hasOne(PostalAddress::class);
     }
 
-
     public function getHasActiveMembership(): bool
     {
         $latestHistoryEvent = $this->latestMembershipHistory;
+
         return $latestHistoryEvent?->getIsActive() ?? false;
 
     }
@@ -152,21 +158,22 @@ class Member extends Model
     public function scopeHasActiveMembership(Builder|Member $query): Builder
     {
         return $query->whereHas('latestMembershipHistory',
-            fn(Builder|MembershipHistory $query) => $query->isActive()
+            fn (Builder|MembershipHistory $query) => $query->isActive()
         );
     }
-
 
     public function getMembershipType(): MembershipType
     {
         /** @var MembershipHistory $membershipHistory */
         $membershipHistory = $this->latestMembershipHistory;
+
         return $membershipHistory->membership_type ?? MembershipType::UNPAIDMEMBER;
 
     }
 
     public function setMembershipType(MembershipType $membershipType): void
     {
+
         $this->membershipHistory()->create([
             'membership_type' => $membershipType->value,
         ]);
@@ -179,9 +186,10 @@ class Member extends Model
 
     public function getJoiningDate(): ?Carbon
     {
-        if($this->oldestMembershipHistory) {
+        if ($this->oldestMembershipHistory) {
             return Carbon::make($this->oldestMembershipHistory->created_at);
         }
+
         return null;
     }
 
@@ -193,16 +201,23 @@ class Member extends Model
         ]);
     }
 
-    public function getIsTrustee(): bool
+    public function getIsActiveTrustee(): bool
     {
         $latestTrusteeHistory = $this->latestTrusteeHistory;
-        return $latestTrusteeHistory?->isTrustee()->exists() ?? false;
+
+        if (! $latestTrusteeHistory) {
+            return false;
+        }
+
+        if (! $latestTrusteeHistory->resigned_at) {
+            return true;
+        }
+
+        return false;
     }
 
     public function scopeIsTrustee(Builder $query): Builder
     {
-        return $query->whereHas('latestTrusteeHistory', fn(Builder|TrusteeHistory $query) => $query->isTrustee());
+        return $query->whereHas('latestTrusteeHistory', fn (Builder|TrusteeHistory $query) => $query->isTrustee());
     }
-
-
 }

@@ -13,7 +13,6 @@ use Spatie\Permission\Exceptions\UnauthorizedException;
 
 class MemberShowController extends Controller
 {
-
     /**
      * Display the specified resource.
      */
@@ -22,11 +21,10 @@ class MemberShowController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-
-        if(
-            !$user->membersHavePermission(PermissionEnum::VIEWMEMBERS->value)
-            && !$user->members->contains('id','=',$member->id)
-        ){
+        if (
+            ! $user->checkPermissions([PermissionEnum::VIEWMEMBERS->value])
+            && ! $user->members->contains('id', '=', $member->id)
+        ) {
             throw UnauthorizedException::forPermissions([PermissionEnum::VIEWOWNMEMBER->value]);
         }
 
@@ -41,5 +39,4 @@ class MemberShowController extends Controller
             'member' => MemberData::fromModel($member),
         ]);
     }
-
 }

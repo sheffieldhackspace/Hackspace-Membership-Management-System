@@ -3,7 +3,6 @@
 namespace App\Data;
 
 use App\Enums\MembershipType;
-use App\Models\Member;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
 
@@ -12,8 +11,7 @@ class MembershipTypeData extends Data
     public function __construct(
         public string $value,
         public string $label,
-    ) {
-    }
+    ) {}
 
     public static function fromEnum(MembershipType $membershipType): self
     {
@@ -28,5 +26,4 @@ class MembershipTypeData extends Data
         return collect(MembershipType::cases())
             ->map(fn (MembershipType $membershipType) => self::fromEnum($membershipType));
     }
-
 }

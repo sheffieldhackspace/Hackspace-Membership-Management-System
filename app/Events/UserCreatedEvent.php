@@ -17,5 +17,4 @@ class UserCreatedEvent
     public function __construct(
         public User $user,
     ) {}
-
 }

@@ -24,7 +24,7 @@ class MemberCreatedListener
         $member->membershipHistory()->create([
             'membership_type' => MembershipType::UNPAIDMEMBER->value,
             'created_at' => $member->created_at,
-            'updated_at' => $member->created_at
+            'updated_at' => $member->created_at,
         ]);
     }
 }

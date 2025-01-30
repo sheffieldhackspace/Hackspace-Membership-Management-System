@@ -4,6 +4,7 @@ import GuestLayout from '@/Layouts/GuestLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
+
 const props = defineProps<{
     status?: string;
 }>();
@@ -30,8 +31,8 @@ const verificationLinkSent = computed(
         </div>
 
         <div
-            class="mb-4 text-sm font-medium text-green-600"
             v-if="verificationLinkSent"
+            class="mb-4 text-sm font-medium text-green-600"
         >
             A new verification link has been sent to the email address you
             provided during registration.
@@ -51,8 +52,9 @@ const verificationLinkSent = computed(
                     method="post"
                     as="button"
                     class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >Log Out</Link
                 >
+                    Log Out
+                </Link>
             </div>
         </form>
     </GuestLayout>
