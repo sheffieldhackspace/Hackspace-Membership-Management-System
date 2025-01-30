@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Exceptions\UnauthorizedException;
 use App\Http\Controllers\Controller;
 use App\Services\Discord\DiscordUser;
 use Illuminate\Http\RedirectResponse;
@@ -35,10 +36,9 @@ class DiscordController extends Controller
             ->user();
 
         if ($user->isUserInGuild(config('services.discord.guild_id'))) {
-            // User is in the guild
+            // Authentication passed...
         } else {
-
+            throw UnauthorizedException::notInDiscordGuild();
         }
-
     }
 }
