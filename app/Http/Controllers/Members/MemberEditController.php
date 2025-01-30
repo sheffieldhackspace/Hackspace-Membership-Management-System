@@ -22,10 +22,10 @@ class MemberEditController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        if(
-            !$user->checkPermissions([PermissionEnum::EDITOWNMEMBER->value])
-            && !$user->members->contains('id','=',$member->id)
-        ){
+        if (
+            ! $user->checkPermissions([PermissionEnum::EDITOWNMEMBER->value])
+            && ! $user->members->contains('id', '=', $member->id)
+        ) {
             throw UnauthorizedException::forPermissions([PermissionEnum::EDITOWNMEMBER->value]);
         }
 
@@ -39,6 +39,7 @@ class MemberEditController extends Controller
         return Inertia::render('Members/Edit', [
             'member' => MemberData::fromModel($member),
             'membershipTypes' => MembershipTypeData::getAll(),
+            'canChangeMembershipType' => $user->can('changeMembershipType', $member),
         ]);
     }
 }

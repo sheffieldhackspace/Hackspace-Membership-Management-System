@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Enums\RolesEnum;
 use App\Events\TrusteeHistoryChangedEvent;
 
-
 class TrusteeHistoryListener
 {
     /**
@@ -23,7 +22,7 @@ class TrusteeHistoryListener
     {
         $member = $event->trusteeHistory->member;
         $trusteeHistory = $member->latestTrusteeHistory;
-        if($trusteeHistory->isTrustee()->exists()){
+        if ($trusteeHistory->isTrustee()->exists()) {
             $member->assignRole(RolesEnum::ADMIN->value);
         } else {
             $member->removeRole(RolesEnum::ADMIN->value);

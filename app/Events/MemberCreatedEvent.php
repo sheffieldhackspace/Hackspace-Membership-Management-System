@@ -17,5 +17,4 @@ class MemberCreatedEvent
     public function __construct(
         public Member $member,
     ) {}
-
 }

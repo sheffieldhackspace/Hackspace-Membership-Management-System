@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class MemberStoreController extends Controller
 {
-
     /**
      * Store a newly created resource in storage.
      */
@@ -15,6 +14,4 @@ class MemberStoreController extends Controller
     {
         //
     }
-
-
 }

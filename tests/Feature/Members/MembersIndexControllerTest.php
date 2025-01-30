@@ -5,6 +5,7 @@ namespace Tests\Feature\Members;
 use App\Enums\MembershipType;
 use App\Models\Member;
 use App\Models\MembershipHistory;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
@@ -16,7 +17,8 @@ class MembersIndexControllerTest extends TestCase
 
     public function test_it_displays_a_list_of_members(): void
     {
-        $this->asAdminUser();
+        $user = User::factory()->isAdmin()->create();
+        $this->actingAs($user);
 
         Member::factory()->count(3)->create();
 
@@ -31,7 +33,8 @@ class MembersIndexControllerTest extends TestCase
 
     public function test_it_filters_members_by_search_term(): void
     {
-        $this->asAdminUser();
+        $user = User::factory()->isAdmin()->create();
+        $this->actingAs($user);
 
         Member::factory()->create(['name' => 'John Doe']);
         Member::factory()->create(['name' => 'Jane Smith']);
@@ -48,7 +51,8 @@ class MembersIndexControllerTest extends TestCase
 
     public function test_it_filters_members_by_membership_type(): void
     {
-        $this->asAdminUser();
+        $user = User::factory()->isAdmin()->create();
+        $this->actingAs($user);
 
         Member::factory()->has(MembershipHistory::factory(['membership_type' => MembershipType::MEMBER]))->create();
         Member::factory()->has(MembershipHistory::factory(['membership_type' => MembershipType::UNPAIDMEMBER]))->create();

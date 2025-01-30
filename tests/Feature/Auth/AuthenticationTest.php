@@ -2,10 +2,13 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
+#[CoversClass(AuthenticatedSessionController::class)]
 class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;

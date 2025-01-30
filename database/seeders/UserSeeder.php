@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\EmailAddress;
 use App\Models\Member;
-use App\Models\MembershipHistory;
 use App\Models\PostalAddress;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -19,7 +18,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        if(config('APP_ENV') === 'production') {
+        if (config('APP_ENV') === 'production') {
             return;
         }
 
@@ -33,7 +32,7 @@ class UserSeeder extends Seeder
             ->create([
                 'email' => 'test@test.com',
                 'password' => Hash::make('password'),
-                'remember_token' => Str::random(60)
+                'remember_token' => Str::random(60),
             ]);
     }
 }

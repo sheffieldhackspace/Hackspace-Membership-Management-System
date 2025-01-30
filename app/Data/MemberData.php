@@ -3,23 +3,15 @@
 namespace App\Data;
 
 use App\Models\Member;
-use App\Models\MembershipHistory;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Lazy;
 
 class MemberData extends Data
 {
     /**
-     * @param string $id
-     * @param string $name
-     * @param string $knownAs
-     * @param MembershipTypeData $membershipType
-     * @param bool $hasActiveMembership
-     * @param string|null $joiningDate
-     * @param EmailAddressData[]|Lazy $emailAddresses
-     * @param PostalAddressData|Lazy $postalAddress
-     * @param TrusteeHistoryData[]|Lazy $trusteeHistory
-     * @param MembershipHistoryData[]|Lazy $membershipHistory
+     * @param  EmailAddressData[]|Lazy  $emailAddresses
+     * @param  TrusteeHistoryData[]|Lazy  $trusteeHistory
+     * @param  MembershipHistoryData[]|Lazy  $membershipHistory
      */
     public function __construct(
         public string $id,
@@ -32,8 +24,7 @@ class MemberData extends Data
         public PostalAddressData|Lazy $postalAddress,
         public array|Lazy $trusteeHistory,
         public array|Lazy $membershipHistory,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Member $member): self
     {
@@ -66,5 +57,4 @@ class MemberData extends Data
             ),
         );
     }
-
 }

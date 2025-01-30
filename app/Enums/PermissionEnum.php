@@ -4,7 +4,6 @@ namespace App\Enums;
 
 enum PermissionEnum: string
 {
-
     case VIEWUSERS = 'view-users';
     case VIEWOWNUSER = 'view-user';
     case EDITUSERS = 'edit-users';
@@ -32,6 +31,7 @@ enum PermissionEnum: string
             self::EDITOWNMEMBER => 'Edit Member',
             self::CREATEMEMBER => 'Create Member',
             self::VIEWPWMEMBERREPORT => 'View PW User Member Report',
+            self::CHANGEMEMBERSHIPTYPE => 'Change Membership Type',
         };
     }
 }
