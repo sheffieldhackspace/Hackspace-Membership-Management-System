@@ -31,7 +31,7 @@ If you are running the project for the first time you will need to run the follo
 ```bash
 cp .env.example .env
 docker-compose laravel exec --rm composer install
-docker-compose laravel exec npm install
+docker-compose laravel exec npm ci
 docker-compose laravel exec php artisan migrate --seed
 docker-compose laravel exec php artisan key:generate
 docker-compose laravel exec php artisan typescript:transform
