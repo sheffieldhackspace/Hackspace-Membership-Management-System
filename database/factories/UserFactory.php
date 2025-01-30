@@ -6,7 +6,6 @@ use App\Enums\MembershipType;
 use App\Enums\RolesEnum;
 use App\Models\Member;
 use App\Models\MembershipHistory;
-use App\Models\TrusteeHistory;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -62,8 +61,7 @@ class UserFactory extends Factory
 
     public function isPWUser(): static
     {
-        return $this->afterCreating(fn (User $user) =>
-            $user->assignRole(RolesEnum::PWUSER)
+        return $this->afterCreating(fn (User $user) => $user->assignRole(RolesEnum::PWUSER)
         );
     }
 }

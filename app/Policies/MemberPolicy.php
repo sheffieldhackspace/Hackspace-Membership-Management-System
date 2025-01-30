@@ -43,6 +43,14 @@ class MemberPolicy
     }
 
     /**
+     * Determine whether the user can change the membership type of the model.
+     */
+    public function changeMembershipType(User $user, Member $member): bool
+    {
+        return $user->checkPermissions([PermissionEnum::CHANGEMEMBERSHIPTYPE]);
+    }
+
+    /**
      * Determine whether the user can delete the model.
      */
     public function delete(User $user, Member $member): bool

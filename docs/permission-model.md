@@ -25,7 +25,7 @@ The system uses the [Spatie Permissions](https://spatie.be/docs/laravel-permissi
 
 For backend authorization we aim to use middlewear as defined in the route files as much as possible. That way any request without permission never makes it to a controller. This can be backed up with checks within the controllers if needed.
 
-On the front end we can use the `HasPermission` component to show or hide elements based on the users permissions. This should be used when possible though it can lead to a poor user experience if not used correctly.
+On the front end we can pass the relevant permissions to the view and use them to show/hide elements as needed using `$user->can('update', $member)`.
 
 ### Adding new permissions
 When adding new permissions you should add them to the `Permission` enum in the `app/Enums` folder. This will allow you to use the enum in the code and ensure that the permission is always spelled correctly. You should also add the permission to the `RolesAndPermissionsSeeder` so that it is added to the database.

@@ -3,8 +3,10 @@
 namespace Tests\Feature\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
+#[CoversClass(\App\Http\Controllers\Auth\RegisteredUserController::class)]
 class RegistrationTest extends TestCase
 {
     use RefreshDatabase;

@@ -16,7 +16,5 @@ class MembershipHistoryChangedEvent
      */
     public function __construct(
         public MembershipHistory $membershipHistory,
-    )
-    { }
-
+    ) {}
 }

@@ -3,32 +3,38 @@
 namespace App\Http\Requests\Members;
 
 use App\Enums\MembershipType;
-use App\Enums\PermissionEnum;
 use App\Models\Member;
+use App\Models\User;
 use App\Rules\OnePrimaryEmailAddress;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Validator;
 
 class MembersUpdateRequest extends FormRequest
 {
-
     public function rules(): array
     {
+        /** @var ?Member $member */
+        $member = $this->route('member');
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'knownAs' => ['required', 'string', 'max:255'],
-            'emailAddresses' => ['required', 'array', new OnePrimaryEmailAddress, 'min:1'],
-            'emailAddresses.*.id' => ['nullable','string', 'max:255'],
-            'emailAddresses.*.emailAddress' => ['required', 'email', 'unique:email_addresses', 'max:255'],
+            'emailAddresses.*.emailAddress' => [
+                'required',
+                'email',
+                'distinct',
+                Rule::unique('email_addresses', 'email_address')->ignore($member?->id, 'member_id'),
+                'max:255',
+            ],
             'emailAddresses.*.isPrimary' => ['required', 'boolean'],
+            'emailAddresses' => ['required', 'array', new OnePrimaryEmailAddress, 'min:1'],
             'postalAddress' => ['nullable', 'array'],
-            'postalAddress.line1' => ['string', 'required_with:postalAddress', 'max:255'],
+            'postalAddress.line1' => ['required_with:postalAddress', 'string', 'max:255'],
             'postalAddress.line2' => ['string', 'nullable', 'max:255'],
             'postalAddress.line3' => ['string', 'nullable', 'max:255'],
             'postalAddress.city' => ['string', 'nullable', 'max:255'],
             'postalAddress.county' => ['string', 'nullable', 'max:255'],
-            'postalAddress.postcode' => ['string', 'required_with:postalAddress', 'max:255'],
+            'postalAddress.postcode' => ['required_with:postalAddress', 'string', 'max:255'],
             'membershipType' => [
                 'required',
                 Rule::enum(MembershipType::class),
@@ -40,10 +46,10 @@ class MembersUpdateRequest extends FormRequest
         ];
     }
 
-    protected function passedValidation(): void
+    protected function prepareForValidation(): void
     {
-        if($this->exists('postalAddress')){
-            $this->replace([
+        if (! $this->exists('postalAddress')) {
+            $this->merge([
                 'postalAddress.line1' => $this->get('postalAddress.line1', ''),
                 'postalAddress.line2' => $this->get('postalAddress.line2', ''),
                 'postalAddress.line3' => $this->get('postalAddress.line3', ''),
@@ -51,13 +57,45 @@ class MembersUpdateRequest extends FormRequest
                 'postalAddress.county' => $this->get('postalAddress.county', ''),
                 'postalAddress.postcode' => $this->get('postalAddress.postcode', ''),
             ]);
-        };
+        }
 
-        if(!$this->user()->checkPermissions([PermissionEnum::CHANGEMEMBERSHIPTYPE->value])){
-            $this->replace([
-                'membershipType' => null,
-                'trustee' => null,
+        /** @var User $user */
+        $user = $this->user();
+        $member = Member::find($this->route('member'))->firstOrFail();
+
+        if ($user->cant('changeMembershipType', $member)) {
+            $this->merge([
+                'membershipType' => $member->getMembershipType()->value,
+                'trustee' => $member->getIsActiveTrustee(),
             ]);
-        };
+        }
+    }
 
-    }}
+    public function messages(): array
+    {
+        return [
+            'postalAddress.line1.required_with' => 'Address Line 1 is required',
+            'postalAddress.postcode.required_with' => 'A postcode is required',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'name' => 'name',
+            'knownAs' => 'known as',
+            'emailAddresses.*.emailAddress' => 'email address',
+            'emailAddresses.*.isPrimary' => 'primary email Address',
+            'emailAddresses' => 'email addresses',
+            'postalAddress' => 'address',
+            'postalAddress.line1' => 'address line 1',
+            'postalAddress.line2' => 'address line 2',
+            'postalAddress.line3' => 'address line 3',
+            'postalAddress.city' => 'city',
+            'postalAddress.county' => 'county',
+            'postalAddress.postcode' => 'postcode',
+            'membershipType' => 'membership type',
+            'trustee' => 'trustee',
+        ];
+    }
+}

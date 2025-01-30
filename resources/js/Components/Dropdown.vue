@@ -53,7 +53,7 @@ const open = ref(false);
             v-show="open"
             class="fixed inset-0 z-40"
             @click="open = false"
-        ></div>
+        />
 
         <Transition
             enter-active-class="transition ease-out duration-200"
