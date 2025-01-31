@@ -13,7 +13,9 @@ use Laravel\Socialite\Two\ProviderInterface;
 /**
  * Discord OAuth2 Provider.
  * Based on martinbean/socialite-discord-provider but modified so much it made little sense to require and then extend the original.
+ *
  * @method SocialiteDiscordUser user()
+ *
  * @see https://github.com/martinbean/socialite-discord-provider Origial package this was based on
  * @see https://discord.com/developers/docs/topics/oauth2#authorization-url Discord OAuth2 documentation
  */
@@ -39,23 +41,79 @@ class DiscordProvider extends AbstractProvider implements ProviderInterface
         return new BotRedirectBuilder($this->clientId);
     }
 
-    protected function getAuthUrl($state): string
+    /**
+     * Get the access token response for the given code.
+     *
+     * @param  string  $code
+     *
+     * @throws DiscordAuthenticationException
+     */
+    public function getAccessTokenResponse($code): array
     {
-        return $this->buildAuthUrlFromBase('https://discord.com/api/oauth2/authorize', $state);
+        try {
+            return Http::acceptJson()
+                ->withBasicAuth($this->clientId, $this->clientSecret)
+                ->asForm()
+                ->post($this->getTokenUrl(), $this->getTokenFields($code))
+                ->throw()
+                ->json();
+        } catch (ConnectionException|RequestException $e) {
+            throw DiscordAuthenticationException::errorRetrievingAccessToken($e);
+        }
     }
-
 
     protected function getTokenUrl(): string
     {
         return 'https://discord.com/api/oauth2/token';
     }
 
+    protected function getTokenFields($code): array
+    {
+        return [
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'code' => $code,
+            'grant_type' => 'authorization_code',
+            'redirect_uri' => $this->redirectUrl,
+        ];
+    }
+
+    protected function getAuthUrl($state): string
+    {
+        return $this->buildAuthUrlFromBase('https://discord.com/api/oauth2/authorize', $state);
+    }
+
+    /**
+     * Get the access token response for the given refresh token.
+     *
+     * @param  string  $refreshToken
+     *
+     * @throws DiscordAuthenticationException
+     */
+    protected function getRefreshTokenResponse($refreshToken): array
+    {
+        try {
+            return Http::acceptJson()
+                ->withBasicAuth($this->clientId, $this->clientSecret)
+                ->asForm()
+                ->post($this->getTokenUrl(), [
+                    'grant_type' => 'refresh_token',
+                    'refresh_token' => $refreshToken,
+                    'client_id' => $this->clientId,
+                    'client_secret' => $this->clientSecret,
+                ])
+                ->throw()
+                ->json();
+        } catch (ConnectionException|RequestException $e) {
+            throw DiscordAuthenticationException::errorRetrievingRefreshToken($e);
+        }
+    }
 
     /**
      * Get the raw user for the given access token.
      *
-     * @param string $token
-     * @return array
+     * @param  string  $token
+     *
      * @throws DiscordAuthenticationException
      */
     protected function getUserByToken($token): array
@@ -80,84 +138,24 @@ class DiscordProvider extends AbstractProvider implements ProviderInterface
         } catch (ConnectionException|RequestException $e) {
             throw DiscordAuthenticationException::errorRetrievingUserData($e);
         }
-
     }
 
     /**
      * Maps the user array to a DiscordUser object.
-     *
-     * @param array $user
-     * @return SocialiteDiscordUser
      */
     protected function mapUserToObject(array $user): SocialiteDiscordUser
     {
-        return new SocialiteDiscordUser()->setRaw($user)->map([
-            'id' => $user['id'],
-            'name' => $user['username'],
-            'nickname' => $user['global_name'],
-            'email' => $user['email'] ?? null,
-            'avatar' => sprintf('https://cdn.discordapp.com/avatars/%s/%s.png', $user['id'], $user['avatar']),
-            'avatar_hash' => $user['avatar'],
-            'guilds' => $user['guilds'],
-            'verified' => $user['verified'],
-        ]);
-    }
-
-    protected function getTokenFields($code): array
-    {
-        return [
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret,
-            'code' => $code,
-            'grant_type' => 'authorization_code',
-            'redirect_uri' => $this->redirectUrl,
-        ];
-    }
-
-    /**
-     * Get the access token response for the given code.
-     *
-     * @param string $code
-     * @return array
-     * @throws DiscordAuthenticationException
-     */
-    public function getAccessTokenResponse($code): array
-    {
-        try {
-            return Http::acceptJson()
-                ->withBasicAuth($this->clientId, $this->clientSecret)
-                ->asForm()
-                ->post($this->getTokenUrl(), $this->getTokenFields($code))
-                ->throw()
-                ->json();
-        } catch (ConnectionException|RequestException $e) {
-            throw DiscordAuthenticationException::errorRetrievingAccessToken($e);
-        }
-    }
-
-    /**
-     * Get the access token response for the given refresh token.
-     *
-     * @param string $refreshToken
-     * @return array
-     * @throws DiscordAuthenticationException
-     */
-    protected function getRefreshTokenResponse($refreshToken): array
-    {
-        try {
-            return Http::acceptJson()
-                ->withBasicAuth($this->clientId, $this->clientSecret)
-                ->asForm()
-                ->post($this->getTokenUrl(), [
-                    'grant_type' => 'refresh_token',
-                    'refresh_token' => $refreshToken,
-                    'client_id' => $this->clientId,
-                    'client_secret' => $this->clientSecret,
-                ])
-                ->throw()
-                ->json();
-        } catch (ConnectionException|RequestException $e) {
-            throw DiscordAuthenticationException::errorRetrievingRefreshToken($e);
-        }
+        return (new SocialiteDiscordUser)
+            ->setRaw($user)
+            ->map([
+                'id' => $user['id'],
+                'name' => $user['username'],
+                'nickname' => $user['global_name'],
+                'email' => $user['email'] ?? null,
+                'avatar' => sprintf('https://cdn.discordapp.com/avatars/%s/%s.png', $user['id'], $user['avatar']),
+                'avatar_hash' => $user['avatar'],
+                'guilds' => $user['guilds'],
+                'verified' => $user['verified'],
+            ]);
     }
 }
