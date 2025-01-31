@@ -25,12 +25,12 @@ class UserData extends Data
             members: Lazy::whenLoaded(
                 'members',
                 $user,
-                fn() => $user->members->map(fn($member) => MemberData::fromModel($member))
+                fn () => $user->members->map(fn ($member) => MemberData::fromModel($member))
             ),
             discordUser: Lazy::whenLoaded(
                 'discordUser',
                 $user,
-                fn() => DiscordUserData::fromModel($user->discordUser)
+                fn () => DiscordUserData::fromModel($user->discordUser)
             ),
         );
     }
