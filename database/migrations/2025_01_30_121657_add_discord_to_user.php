@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -12,11 +13,11 @@ return new class extends Migration {
     {
         Schema::create('discord_users', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('discord_id')->unique()->index();
+            $table->unsignedBigInteger('discord_id')->unique()->index();
             $table->uuid('user_id')->nullable();
             $table->uuid('member_id')->nullable();
-            $table->string('username')->index();
-            $table->string('nickname')->index();
+            $table->string('username', 32)->index();
+            $table->string('nickname', 32)->index();
             $table->boolean('verified')->default(false);
             $table->string('avatar_hash');
             $table->timestamps();

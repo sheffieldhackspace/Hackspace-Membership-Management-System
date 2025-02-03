@@ -17,7 +17,11 @@ class DiscordUserFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'discord_id' => rand() << 32 | rand(),
+            'username' => $this->faker->userName,
+            'nickname' => $this->faker->name,
+            'verified' => $this->faker->boolean,
+            'avatar_hash' => $this->faker->sha256,
         ];
     }
 }

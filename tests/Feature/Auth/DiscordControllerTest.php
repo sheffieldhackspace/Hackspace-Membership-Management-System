@@ -3,11 +3,13 @@
 namespace Tests\Feature\Auth;
 
 use App\Http\Controllers\Auth\DiscordController;
+use App\Models\DiscordUser;
 use App\Models\EmailAddress;
 use App\Models\Member;
 use App\Models\User;
 use App\Providers\DiscordServiceProvider;
 use App\Services\Discord\DiscordProvider;
+use App\Services\Discord\DiscordService;
 use App\Services\Discord\SocialiteDiscordUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -20,6 +22,7 @@ use Tests\TestCase;
 #[CoversClass(DiscordServiceProvider::class)]
 #[CoversClass(DiscordProvider::class)]
 #[CoversClass(SocialiteDiscordUser::class)]
+#[CoversClass(DiscordService::class)]
 class DiscordControllerTest extends TestCase
 {
     use RefreshDatabase;
@@ -29,77 +32,135 @@ class DiscordControllerTest extends TestCase
     {
         $response = $this->get(route('discord.redirect'));
 
-        $response->assertRedirect();
         $response->assertRedirectContains(urlencode(route('discord.callback')));
         $response->assertRedirectContains('scope=email+identify+guilds');
     }
 
-    public function test_verified_discord_user_in_the_guild_with_discord_id_on_user(): void
+    public function test_verified_discord_user_in_the_guild_without_matching_user_or_member_is_authenticated_with_new_user(): void
     {
         Carbon::setTestNow(now());
 
-        $user = User::factory(['discord_id' => 'asdasd1231'])->create();
+        $discordId = '3845945134875743875';
+        User::factory()
+            ->has(
+                DiscordUser::factory([
+                    'discord_id' => $discordId,
+                ])
+            )->create();
 
         $this->fakeOAuthRequests([
-            'id' => $user->discord_id,
-        ], [
-            0 => [
-                'id' => config('services.discord.guild_id'),
-                'name' => 'Test Guild',
-                'icon' => 'icon',
-                'owner' => false,
-                'permissions' => 0,
-                'permissions_new' => '0',
-                'features' => [],
-            ],
+            'id' => $discordId,
         ]);
-
-        $this->session(['state' => 'test_state']);
 
         $response = $this->get(route('discord.callback', ['code' => 'test_code', 'state' => 'test_state']));
 
-        $response->assertOk();
+        $user = User::whereDiscordId($discordId)->first();
+        $this->assertNotNull($user, 'User should have been created');
+
+        $response->assertRedirectToRoute('dashboard');
+        $this->assertAuthenticatedAs($user);
+
+    }
+
+    public function test_verified_discord_user_in_the_guild_with_discord_id_on_user_is_authenticated(): void
+    {
+        Carbon::setTestNow(now());
+
+        $user = User::factory()
+            ->has(
+                DiscordUser::factory([
+                    'discord_id' => '3845945134875743875',
+                ])
+            )->create();
+
+        $this->fakeOAuthRequests([
+            'id' => $user->discordUser->discord_id,
+        ]);
+
+        $response = $this->get(route('discord.callback', ['code' => 'test_code', 'state' => 'test_state']));
+
         $response->assertRedirect(route('dashboard'));
         $this->assertAuthenticatedAs($user);
 
+    }
+
+    public function test_discord_user_in_the_guild_with_discord_id_on_member_and_not_user_is_authenticated(): void
+    {
+        Carbon::setTestNow(now());
+
+        $discordId = '3845945134875743875';
+        $member = Member::factory()
+            ->has(
+                DiscordUser::factory([
+                    'discord_id' => $discordId,
+                ])
+            )
+            ->isMember()
+            ->create();
+
+        $this->fakeOAuthRequests([
+            'id' => $discordId,
+            'verified' => true,
+        ]);
+
+        $response = $this->get(route('discord.callback', ['code' => 'test_code', 'state' => 'test_state']));
+
+        $user = User::whereDiscordId($discordId)->first();
+        $this->assertNotNull($user, 'User should have been created');
+
+        $response->assertRedirect(route('dashboard'));
+        $this->assertAuthenticatedAs($user);
+
+        $this->assertDatabaseHas('discord_users', [
+            'discord_id' => $discordId,
+            'user_id' => $user->id,
+            'member_id' => $member->id,
+        ]);
+
+        $this->assertDatabaseHas('members', [
+            'user_id' => $user->id,
+            'id' => $member->id,
+        ]);
     }
 
     public function test_verified_discord_user_in_the_guild_without_discord_id_on_user_but_matching_member_is_authenticated(): void
     {
         Carbon::setTestNow(now());
 
+        $discordId = '3845945134875743875';
         $emailAddress = $this->faker->email;
-
-        $user = User::factory()
-            ->has(Member::factory()
-                ->has(EmailAddress::factory(['email_address' => $emailAddress, 'verified_at' => null, 'is_primary' => true]))
-            )
+        $member = Member::factory()
+            ->has(EmailAddress::factory(['email_address' => $emailAddress, 'verified_at' => null, 'is_primary' => true]))
             ->create();
+
         $this->fakeOAuthRequests([
+            'id' => $discordId,
             'email' => $emailAddress,
             'verified' => true,
-        ], [
-            0 => [
-                'id' => config('services.discord.guild_id'),
-                'name' => 'Test Guild',
-                'icon' => 'icon',
-                'owner' => false,
-                'permissions' => 0,
-                'permissions_new' => '0',
-                'features' => [],
-            ],
         ]);
-
-        $this->session(['state' => 'test_state']);
 
         $response = $this->get(route('discord.callback', ['code' => 'test_code', 'state' => 'test_state']));
 
-        $response->assertOk();
+        $user = User::whereDiscordId($discordId)->first();
+        $this->assertNotNull($user, 'User should have been created');
+
         $response->assertRedirect(route('dashboard'));
         $this->assertAuthenticatedAs($user);
+
+        $this->assertDatabaseHas('discord_users', [
+            'discord_id' => $discordId,
+            'user_id' => $user->id,
+            'member_id' => $member->id,
+        ]);
+
         $this->assertDatabaseHas('email_addresses', [
             'email_address' => $emailAddress,
             'verified_at' => now(),
+        ]);
+
+        $this->assertDatabaseHas('members', [
+            'user_id' => $user->id,
+            'id' => $member->id,
         ]);
 
     }
@@ -108,38 +169,39 @@ class DiscordControllerTest extends TestCase
     {
         Carbon::setTestNow(now());
 
+        $discordId = '3845945134875743875';
         $emailAddress = $this->faker->email;
-
-        $user = User::factory()
-            ->has(Member::factory()
-                ->has(EmailAddress::factory(['email_address' => $emailAddress, 'verified_at' => null, 'is_primary' => true]))
-            )
+        $member = Member::factory()
+            ->has(EmailAddress::factory(['email_address' => $emailAddress, 'verified_at' => null, 'is_primary' => true]))
             ->create();
         $this->fakeOAuthRequests([
+            'id' => $discordId,
             'email' => $emailAddress,
             'verified' => false,
-        ], [
-            0 => [
-                'id' => config('services.discord.guild_id'),
-                'name' => 'Test Guild',
-                'icon' => 'icon',
-                'owner' => false,
-                'permissions' => 0,
-                'permissions_new' => '0',
-                'features' => [],
-            ],
         ]);
-
-        $this->session(['state' => 'test_state']);
 
         $response = $this->get(route('discord.callback', ['code' => 'test_code', 'state' => 'test_state']));
 
-        $response->assertOk();
-        $response->assertRedirect(route('discord.link.user'));
-        $this->assertAuthenticated();
+        $user = User::whereDiscordId($discordId)->first();
+        $this->assertNotNull($user, 'User should have been created');
+
+        $response->assertRedirect(route('dashboard'));
+        $this->assertAuthenticatedAs($user);
+
+        $this->assertDatabaseHas('discord_users', [
+            'discord_id' => $discordId,
+            'user_id' => $user->id,
+            'member_id' => null,
+        ]);
+
         $this->assertDatabaseHas('email_addresses', [
             'email_address' => $emailAddress,
             'verified_at' => null,
+        ]);
+
+        $this->assertDatabaseHas('members', [
+            'user_id' => null,
+            'id' => $member->id,
         ]);
 
     }
@@ -148,19 +210,80 @@ class DiscordControllerTest extends TestCase
     {
         Carbon::setTestNow(now());
 
+        $discordId = '3845945134875743875';
         $emailAddress = $this->faker->email;
-
-        $user = User::factory()
-            ->has(Member::factory()
-                ->has(EmailAddress::factory(['email_address' => $emailAddress, 'verified_at' => null, 'is_primary' => true]))
-            )
+        $member = Member::factory()
+            ->has(EmailAddress::factory(['email_address' => $emailAddress, 'verified_at' => null, 'is_primary' => true]))
             ->create();
         $this->fakeOAuthRequests([
+            'id' => $discordId,
             'email' => $emailAddress,
             'verified' => false,
-        ], [
-            0 => [
-                'id' => config('services.discord.guild_id'),
+        ]);
+
+        $response = $this->get(route('discord.callback', ['code' => 'test_code', 'state' => 'test_state']));
+
+        $user = User::whereDiscordId($discordId)->first();
+        $this->assertNotNull($user, 'User should have been created');
+
+        $response->assertRedirect(route('dashboard'));
+        $this->assertAuthenticatedAs($user);
+
+        $this->assertDatabaseHas('discord_users', [
+            'discord_id' => $discordId,
+            'user_id' => $user->id,
+            'member_id' => null,
+        ]);
+
+        $this->assertDatabaseHas('email_addresses', [
+            'email_address' => $emailAddress,
+            'verified_at' => null,
+        ]);
+
+        $this->assertDatabaseHas('members', [
+            'user_id' => null,
+            'id' => $member->id,
+        ]);
+
+    }
+
+    public function test_verified_and_avatar_has_updated_on_login(): void
+    {
+        Carbon::setTestNow(now());
+
+        $discordId = '3845945134875743875';
+        $user = User::factory()
+            ->has(
+                DiscordUser::factory([
+                    'discord_id' => $discordId,
+                    'avatar_hash' => 'old_avatar_hash',
+                    'verified' => false,
+                ])
+            )->create();
+
+        $this->fakeOAuthRequests([
+            'id' => $discordId,
+            'avatar' => 'new_avatar_hash',
+        ]);
+
+        $response = $this->get(route('discord.callback', ['code' => 'test_code', 'state' => 'test_state']));
+
+        $response->assertRedirectToRoute('dashboard');
+        $this->assertAuthenticatedAs($user);
+
+        $this->assertDatabaseHas('discord_users', [
+            'discord_id' => $discordId,
+            'avatar_hash' => 'new_avatar_hash',
+            'verified' => true,
+        ]);
+
+    }
+
+    public function test_discord_user_not_in_the_guild_cannot_login(): void
+    {
+        $this->fakeOAuthRequests([], [
+            [
+                'id' => '32434665765',
                 'name' => 'Test Guild',
                 'icon' => 'icon',
                 'owner' => false,
@@ -170,34 +293,28 @@ class DiscordControllerTest extends TestCase
             ],
         ]);
 
-        $this->session(['state' => 'test_state']);
-
         $response = $this->get(route('discord.callback', ['code' => 'test_code', 'state' => 'test_state']));
 
-        $response->assertOk();
-        $response->assertRedirect(route('discord.link.user'));
-        $this->assertAuthenticated();
-        $this->assertDatabaseHas('email_addresses', [
-            'email_address' => $emailAddress,
-            'verified_at' => null,
-        ]);
-
-    }
-
-    public function test_discord_user_not_in_the_guild_cannot_login(): void
-    {
-        $this->fakeOAuthRequests();
-
-        $this->session(['state' => 'test_state']);
-
-        $response = $this->get(route('discord.callback', ['code' => 'test_code', 'state' => 'test_state']));
-
-        $response->assertStatus(403);
+        $response->assertUnauthorized();
     }
 
     public function fakeOAuthRequests(array $user = [], array $guilds = []): void
     {
         Http::preventStrayRequests();
+
+        if (count($guilds) === 0) {
+            $guilds = [
+                0 => [
+                    'id' => config('services.discord.guild_id'),
+                    'name' => 'Test Guild',
+                    'icon' => 'icon',
+                    'owner' => false,
+                    'permissions' => 0,
+                    'permissions_new' => '0',
+                    'features' => [],
+                ],
+            ];
+        }
 
         Http::fake([
             'discord.com/api/oauth2/token' => Http::response([
@@ -216,18 +333,10 @@ class DiscordControllerTest extends TestCase
                 'verified' => true,
                 ...$user,
             ]),
-            'discord.com/api/users/@me/guilds' => Http::response([
-                0 => [
-                    'id' => '197038439483310086',
-                    'name' => 'Test Guild',
-                    'icon' => 'icon',
-                    'owner' => false,
-                    'permissions' => 0,
-                    'permissions_new' => '0',
-                    'features' => [],
-                ],
-                ...$guilds,
-            ]),
+            'discord.com/api/users/@me/guilds' => Http::response($guilds),
         ]);
+
+        $this->session(['state' => 'test_state']);
+
     }
 }

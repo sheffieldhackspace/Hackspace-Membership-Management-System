@@ -13,9 +13,7 @@ class DiscordUserData extends Data
         public string $username,
         public bool $verified,
         public ?string $avatar,
-    )
-    {
-    }
+    ) {}
 
     public static function fromModel(DiscordUser $discordUser): self
     {

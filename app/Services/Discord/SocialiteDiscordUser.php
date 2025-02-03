@@ -4,7 +4,6 @@ namespace App\Services\Discord;
 
 use App\Models\DiscordUser;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
 
@@ -45,7 +44,8 @@ class SocialiteDiscordUser extends SocialiteUser
 
     public function isUserInGuild(string $guild): bool
     {
-        return array_any($this->guilds, fn($userGuild) => $userGuild['id'] === $guild);
+        return array_any($this->guilds,
+            fn ($userGuild) => $userGuild['id'] === $guild);
     }
 
     public function saveToSession(): void
@@ -53,28 +53,29 @@ class SocialiteDiscordUser extends SocialiteUser
         session(['discord_user_token' => $this->token]);
     }
 
-    public function getUserModel(): User
-    {
-        $user = User::whereHas(
-            'discordUser',
-            fn(Builder|DiscordUser $query) => $query->whereDiscordId($this->id)
-        )->first();
-
-        if ($user) {
-            return $user;
-        }
-
-        $user = User::create();
-        $user->discordUser()->create([
-            'discord_id' => $this->id,
-            'username' => $this->name,
-            'nickname' => $this->nickname,
-            'verified' => $this->verified,
-            'avatar_hash' => $this->avatar_hash,
-        ]);
-
-        return $user;
-    }
+    //    public function getUserModel(): User
+    //
+    // //        return User::whereDiscordId($this->id)->first();
+    //
+    // //        $discordUser = DiscordUser::firstOrCreate(['discord_id' => $this->id], [
+    // //            'username' => $this->name,
+    // //            'nickname' => $this->nickname,
+    // //            'verified' => $this->verified,
+    // //            'avatar_hash' => $this->avatar_hash,
+    // //        ]);
+    // //
+    // //        /** @var User $user */
+    // //        $user = $discordUser->user()->updateOrCreate([]);
+    // //        if (! $user->discordUser) {
+    // //            $user->discordUser()->save($discordUser);
+    // //        }
+    // //
+    // //        if ($discordUser->member && $user->members->doesntContain($discordUser->member)) {
+    // //            $user->members()->save($discordUser->member);
+    // //        }
+    // //
+    // //        return $user;
+    //    }
 
     public static function getFromSession(): ?SocialiteDiscordUser
     {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Exceptions\DiscordAuthenticationException;
 use App\Http\Controllers\Controller;
 use App\Services\Discord\DiscordProvider;
+use App\Services\Discord\DiscordService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -31,7 +32,7 @@ class DiscordController extends Controller
      *
      * @throws DiscordAuthenticationException
      */
-    public function callback(): RedirectResponse
+    public function callback(DiscordService $discordService): RedirectResponse
     {
         /** @var DiscordProvider $driver */
         $driver = Socialite::driver('discord');
@@ -46,10 +47,7 @@ class DiscordController extends Controller
         if ($discordUser->isUserInGuild(config('services.discord.guild_id'))) {
             $discordUser->saveToSession();
 
-            $user = $discordUser->getUserModel();
-            if ($user->discordUser->verified === false && $discordUser->verified === true) {
-                $user->discordUser->update(['verified' => true]);
-            }
+            $user = $discordService->getUserModelForDiscordUser($discordUser);
 
             // TODO add option to remember login
             Auth::login($user);

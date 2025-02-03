@@ -48,11 +48,13 @@ class DiscordUser extends Model
         'discord_id',
         'username',
         'nickname',
+        'verified',
         'avatar_hash',
     ];
 
     protected $casts = [
         'verified' => 'boolean',
+        'discord_id' => 'string',
     ];
 
     public function user(): BelongsTo

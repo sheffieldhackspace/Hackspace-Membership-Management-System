@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PermissionEnum;
 use App\Events\UserCreatedEvent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -32,20 +33,20 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $roles_count
  *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User permission($permissions, $without = false)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User role($roles, $guard = null, $without = false)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutPermission($permissions)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutRole($roles, $guard = null)
+ * @method static Builder<static>|User newModelQuery()
+ * @method static Builder<static>|User newQuery()
+ * @method static Builder<static>|User permission($permissions, $without = false)
+ * @method static Builder<static>|User query()
+ * @method static Builder<static>|User role($roles, $guard = null, $without = false)
+ * @method static Builder<static>|User whereCreatedAt($value)
+ * @method static Builder<static>|User whereEmail($value)
+ * @method static Builder<static>|User whereEmailVerifiedAt($value)
+ * @method static Builder<static>|User whereId($value)
+ * @method static Builder<static>|User wherePassword($value)
+ * @method static Builder<static>|User whereRememberToken($value)
+ * @method static Builder<static>|User whereUpdatedAt($value)
+ * @method static Builder<static>|User withoutPermission($permissions)
+ * @method static Builder<static>|User withoutRole($roles, $guard = null)
  *
  * @mixin \Eloquent
  */
@@ -127,5 +128,20 @@ class User extends Authenticatable
         return $this->traitGetAllPermissions()
             ->union($memberPermissions)
             ->unique('name');
+    }
+
+    /**
+     * Add a where has clause for discord user with the passed id.
+     *
+     * @return Builder<User>
+     *
+     * @static
+     */
+    public static function whereDiscordId(string $discordId): Builder
+    {
+        return User::whereHas(
+            'discordUser',
+            fn (DiscordUser|Builder $discordUserQuery) => $discordUserQuery->where('discord_id', $discordId)
+        );
     }
 }
