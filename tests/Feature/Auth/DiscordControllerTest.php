@@ -166,6 +166,8 @@ class DiscordControllerTest extends TestCase
 
     public function test_unverified_discord_user_in_the_guild_without_discord_id_on_user_but_with_matching_member_is_prompted_to_verify(): void
     {
+        $this->markTestIncomplete('This functionality has not been implemented yet.');
+
         Carbon::setTestNow(now());
 
         $discordId = '3845945134875743875';
@@ -184,7 +186,7 @@ class DiscordControllerTest extends TestCase
         $user = User::whereDiscordId($discordId)->first();
         $this->assertNotNull($user, 'User should have been created');
 
-        $response->assertRedirect(route('dashboard'));
+        $response->assertRedirect(route('discord.link.user'));
         $this->assertAuthenticatedAs($user);
 
         $this->assertDatabaseHas('discord_users', [
@@ -207,6 +209,8 @@ class DiscordControllerTest extends TestCase
 
     public function test_discord_user_in_the_guild_without_discord_id_on_user_and_without_matching_member_is_prompted_to_send_match_emails(): void
     {
+        $this->markTestIncomplete('This functionality has not been implemented yet.');
+
         Carbon::setTestNow(now());
 
         $discordId = '3845945134875743875';
@@ -225,7 +229,7 @@ class DiscordControllerTest extends TestCase
         $user = User::whereDiscordId($discordId)->first();
         $this->assertNotNull($user, 'User should have been created');
 
-        $response->assertRedirect(route('dashboard'));
+        $response->assertRedirect(route('discord.link.user'));
         $this->assertAuthenticatedAs($user);
 
         $this->assertDatabaseHas('discord_users', [
