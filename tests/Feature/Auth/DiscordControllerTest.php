@@ -59,7 +59,6 @@ class DiscordControllerTest extends TestCase
 
         $response->assertRedirectToRoute('dashboard');
         $this->assertAuthenticatedAs($user);
-
     }
 
     public function test_verified_discord_user_in_the_guild_with_discord_id_on_user_is_authenticated(): void
@@ -247,7 +246,7 @@ class DiscordControllerTest extends TestCase
 
     }
 
-    public function test_verified_and_avatar_has_updated_on_login(): void
+    public function test_verified_and_avatar_is_updated_on_login(): void
     {
         Carbon::setTestNow(now());
 
@@ -276,7 +275,107 @@ class DiscordControllerTest extends TestCase
             'avatar_hash' => 'new_avatar_hash',
             'verified' => true,
         ]);
+    }
 
+    public function test_user_info_is_fetched_from_at_me_route(): void
+    {
+        Carbon::setTestNow(now());
+
+        $userData = [
+            'id' => '658978282742438',
+            'username' => 'name',
+            'global_name' => 'nickname',
+            'email' => $this->faker->email,
+            'avatar' => '8342729096ea3675442027381ff50dfe',
+            'verified' => true,
+        ];
+
+        $this->fakeOAuthRequests($userData);
+
+        $response = $this->get(route('discord.callback', ['code' => 'test_code', 'state' => 'test_state']));
+        $response->assertRedirectToRoute('dashboard');
+
+        $this->assertDatabaseHas('discord_users', [
+            'discord_id' => $userData['id'],
+            'username' => $userData['username'],
+            'nickname' => $userData['global_name'],
+            'avatar_hash' => $userData['avatar'],
+            'verified' => $userData['verified'],
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => $email = $userData['email'],
+            'email_verified_at' => now(),
+        ]);
+    }
+
+    public function test_controller_handles_null_fields_in_user_info(): void
+    {
+        Carbon::setTestNow(now());
+
+        $userData = [
+            'id' => '658978282742438',
+            'username' => 'name',
+            'global_name' => null,
+            'email' => null,
+            'avatar' => null,
+            'verified' => false,
+        ];
+
+        $this->fakeOAuthRequests($userData);
+
+        $response = $this->get(route('discord.callback', ['code' => 'test_code', 'state' => 'test_state']));
+        $response->assertRedirectToRoute('dashboard');
+
+        $this->assertDatabaseHas('discord_users', [
+            'discord_id' => $userData['id'],
+            'username' => $userData['username'],
+            'nickname' => $userData['username'],
+            'avatar_hash' => $userData['avatar'],
+            'verified' => $userData['verified'],
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => $userData['email'],
+            'email_verified_at' => null,
+        ]);
+    }
+
+    public function test_controller_updates_user_from_guild_info(): void
+    {
+        Carbon::setTestNow(now());
+
+        $userData = [
+            'id' => '658978282742438',
+            'username' => 'name',
+            'global_name' => 'nickname',
+            'email' => null,
+            'avatar' => null,
+            'verified' => false,
+        ];
+
+        $guildData = [
+            'nick' => 'guild_nickname',
+            'avatar' => '8342729096ea3675442027381ff50dfe',
+        ];
+
+        $this->fakeOAuthRequests($userData, [], $guildData);
+
+        $response = $this->get(route('discord.callback', ['code' => 'test_code', 'state' => 'test_state']));
+        $response->assertRedirectToRoute('dashboard');
+
+        $this->assertDatabaseHas('discord_users', [
+            'discord_id' => $userData['id'],
+            'username' => $userData['username'],
+            'nickname' => $guildData['nick'],
+            'avatar_hash' => $guildData['avatar'],
+            'verified' => $userData['verified'],
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => $userData['email'],
+            'email_verified_at' => null,
+        ]);
     }
 
     public function test_discord_user_not_in_the_guild_cannot_login(): void
@@ -298,7 +397,7 @@ class DiscordControllerTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function fakeOAuthRequests(array $user = [], array $guilds = []): void
+    public function fakeOAuthRequests(array $user = [], array $guilds = [], array $guildInfo = []): void
     {
         Http::preventStrayRequests();
 
@@ -334,6 +433,17 @@ class DiscordControllerTest extends TestCase
                 ...$user,
             ]),
             'discord.com/api/users/@me/guilds' => Http::response($guilds),
+            'discord.com/api/users/@me/guilds/*/member' => Http::response([
+                'user' => [],
+                'nick' => null,
+                'avatar' => null,
+                'banner' => null,
+                'roles' => [],
+                'joined_at' => '2015-04-26T06:26:56.936000+00:00',
+                'deaf' => false,
+                'mute' => false,
+                ...$guildInfo,
+            ]),
         ]);
 
         $this->session(['state' => 'test_state']);

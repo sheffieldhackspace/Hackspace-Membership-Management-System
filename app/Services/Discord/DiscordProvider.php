@@ -25,6 +25,7 @@ class DiscordProvider extends AbstractProvider implements ProviderInterface
         'email',
         'identify',
         'guilds',
+        'guilds.members.read',
     ];
 
     protected $scopeSeparator = ' ';
@@ -150,10 +151,10 @@ class DiscordProvider extends AbstractProvider implements ProviderInterface
             ->map([
                 'id' => $user['id'],
                 'name' => $user['username'],
-                'nickname' => $user['global_name'],
+                'nickname' => $user['global_name'] ?? $user['username'],
                 'email' => $user['email'] ?? null,
-                'avatar' => sprintf('https://cdn.discordapp.com/avatars/%s/%s.png', $user['id'], $user['avatar']),
-                'avatar_hash' => $user['avatar'],
+                'avatar' => $user['avatar'] ? sprintf('https://cdn.discordapp.com/avatars/%s/%s.png', $user['id'], $user['avatar']) : '',
+                'avatar_hash' => $user['avatar'] ?? null,
                 'guilds' => $user['guilds'],
                 'verified' => $user['verified'],
             ]);

@@ -46,6 +46,7 @@ class DiscordController extends Controller
 
         if ($discordUser->isUserInGuild(config('services.discord.guild_id'))) {
             $discordUser->saveToSession();
+            $discordUser->updateUserWithGuildInfo(config('services.discord.guild_id'));
 
             $user = $discordService->getUserModelForDiscordUser($discordUser);
 

@@ -2,8 +2,10 @@
 
 namespace App\Services\Discord;
 
-use App\Models\DiscordUser;
-use App\Models\User;
+use App\Exceptions\DiscordAuthenticationException;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
 
@@ -25,22 +27,12 @@ class SocialiteDiscordUser extends SocialiteUser
      */
     public array $guilds;
 
-    public string $avatar_hash;
+    public ?string $avatar_hash;
 
-    public function getGuilds(): array
-    {
-        return $this->guilds;
-    }
-
-    public function getIsVerified(): bool
-    {
-        return $this->verified;
-    }
-
-    public function getAvatarHash(): string
-    {
-        return $this->avatar_hash;
-    }
+    /**
+     * @var string[]
+     */
+    public array $roles;
 
     public function isUserInGuild(string $guild): bool
     {
@@ -53,29 +45,28 @@ class SocialiteDiscordUser extends SocialiteUser
         session(['discord_user_token' => $this->token]);
     }
 
-    //    public function getUserModel(): User
-    //
-    // //        return User::whereDiscordId($this->id)->first();
-    //
-    // //        $discordUser = DiscordUser::firstOrCreate(['discord_id' => $this->id], [
-    // //            'username' => $this->name,
-    // //            'nickname' => $this->nickname,
-    // //            'verified' => $this->verified,
-    // //            'avatar_hash' => $this->avatar_hash,
-    // //        ]);
-    // //
-    // //        /** @var User $user */
-    // //        $user = $discordUser->user()->updateOrCreate([]);
-    // //        if (! $user->discordUser) {
-    // //            $user->discordUser()->save($discordUser);
-    // //        }
-    // //
-    // //        if ($discordUser->member && $user->members->doesntContain($discordUser->member)) {
-    // //            $user->members()->save($discordUser->member);
-    // //        }
-    // //
-    // //        return $user;
-    //    }
+    /**
+     * @throws DiscordAuthenticationException
+     */
+    public function updateUserWithGuildInfo($guildId): void
+    {
+        $guildMemberUrl = "https://discord.com/api/users/@me/guilds/{$guildId}/member";
+
+        try {
+            $member = Http::acceptJson()
+                ->withToken($this->token)
+                ->get($guildMemberUrl)
+                ->throw()
+                ->json();
+        } catch (RequestException|ConnectionException $e) {
+            throw DiscordAuthenticationException::errorRetrievingUserData($e);
+        }
+
+        $this->nickname = $member['nick'] ?? $this->nickname;
+        $this->avatar_hash = $member['avatar'] ?? $this->avatar_hash;
+        $this->avatar = $member['avatar'] ? sprintf('https://cdn.discordapp.com/avatars/%s/%s.png', $this->id, $member['avatar']) : $this->avatar;
+        $this->roles = $member['roles'] ?? [];
+    }
 
     public static function getFromSession(): ?SocialiteDiscordUser
     {

@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $username
  * @property string $nickname
  * @property bool $verified
- * @property string $avatar_hash
+ * @property string|null $avatar_hash
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Member|null $member

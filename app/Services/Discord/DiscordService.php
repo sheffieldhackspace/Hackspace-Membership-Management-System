@@ -23,7 +23,15 @@ class DiscordService
         ]);
 
         /** @var User $user */
-        $user = $discordUser->user()->firstOrCreate();
+        $user = $discordUser->user()->updateOrCreate([], [
+            'email' => $socialiteDiscordUser->email,
+        ]);
+
+        if ($user->email_verified_at === null && $socialiteDiscordUser->verified) {
+            $user->email_verified_at = now();
+            $user->save();
+        }
+
         $user->discordUser()->save($discordUser);
 
         if ($socialiteDiscordUser->verified && ! $user->discordUser->member) {

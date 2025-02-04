@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('username', 32)->index();
             $table->string('nickname', 32)->index();
             $table->boolean('verified')->default(false);
-            $table->string('avatar_hash');
+            $table->string('avatar_hash')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
