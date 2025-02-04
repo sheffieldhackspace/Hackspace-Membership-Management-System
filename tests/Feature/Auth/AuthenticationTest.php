@@ -3,6 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Models\DiscordUser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -53,5 +54,23 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
         $response->assertRedirect('/');
+    }
+
+    public function test_user_with_discord_login_cannot_login_with_password(): void
+    {
+        $user = User::factory([
+            'password' => null,
+            'remember_token' => null,
+        ])
+            ->has(DiscordUser::factory())
+            ->create();
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertGuest();
+        $response->assertRedirect(route('home'));
     }
 }

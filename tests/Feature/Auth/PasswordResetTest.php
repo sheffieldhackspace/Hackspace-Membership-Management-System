@@ -3,6 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use App\Http\Controllers\Auth\NewPasswordController;
+use App\Models\DiscordUser;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -31,6 +32,22 @@ class PasswordResetTest extends TestCase
         $this->post('/forgot-password', ['email' => $user->email]);
 
         Notification::assertSentTo($user, ResetPassword::class);
+    }
+
+    public function test_reset_password_link_cannot_be_requested_for_user_with_discord_login(): void
+    {
+        Notification::fake();
+
+        $user = User::factory([
+            'password' => null,
+            'remember_token' => null,
+        ])
+            ->has(DiscordUser::factory())
+            ->create();
+
+        $this->post('/forgot-password', ['email' => $user->email]);
+
+        Notification::assertNotSentTo($user, ResetPassword::class);
     }
 
     public function test_reset_password_screen_can_be_rendered(): void

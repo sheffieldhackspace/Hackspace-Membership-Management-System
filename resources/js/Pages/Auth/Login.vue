@@ -153,6 +153,7 @@ const showEmailForm = ref(false);
                                 class="ms-4 bg-brand"
                                 :class="{ 'opacity-25': form.processing }"
                                 :disabled="form.processing"
+                                type="submit"
                             >
                                 Log in
                             </PrimaryButton>
