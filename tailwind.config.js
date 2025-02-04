@@ -16,7 +16,8 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                brand: '#179dd9'
+                brand: '#179dd9',
+                discord: '#5865f2'
             }
         },
     },
