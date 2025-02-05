@@ -1,6 +1,6 @@
 <?php
 
-namespace Middleware;
+namespace Tests\Feature\Middleware;
 
 use App\Enums\MembershipType;
 use App\Models\Member;
@@ -14,7 +14,7 @@ class PermissionMiddlewareTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
