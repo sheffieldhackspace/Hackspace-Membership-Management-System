@@ -6,7 +6,6 @@ use App\Exceptions\DiscordAuthenticationException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
 
 class SocialiteDiscordUser extends SocialiteUser
