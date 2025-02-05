@@ -58,6 +58,7 @@ class DiscordProvider extends AbstractProvider implements ProviderInterface
                 ->post($this->getTokenUrl(), $this->getTokenFields($code))
                 ->throw()
                 ->json();
+
         } catch (ConnectionException|RequestException $e) {
             throw DiscordAuthenticationException::errorRetrievingAccessToken($e);
         }

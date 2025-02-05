@@ -13,9 +13,11 @@ use App\Services\Discord\DiscordService;
 use App\Services\Discord\SocialiteDiscordUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 #[CoversClass(DiscordController::class)]
@@ -383,6 +385,29 @@ class DiscordControllerTest extends TestCase
         ]);
     }
 
+    #[DataProvider('provideErrorRoutes')]
+    public function test_controller_returns_unverified_if_api_throws_error(string $route): void
+    {
+        $discordId = '3845945134875743875';
+        User::factory()
+            ->has(
+                DiscordUser::factory([
+                    'discord_id' => $discordId,
+                ])
+            )->create();
+
+        $this->fakeOAuthRequests([
+            'id' => $discordId,
+        ], [], [], [
+            $route => HTTP::response([], 500),
+        ]);
+
+        $response = $this->get(route('discord.callback', ['code' => 'test_code', 'state' => 'test_state']));
+        $response->assertUnauthorized();
+        $response->assertLocation(route('home'));
+        $this->assertGuest();
+    }
+
     public function test_discord_user_not_in_the_guild_cannot_login(): void
     {
         $this->fakeOAuthRequests([], [
@@ -402,7 +427,7 @@ class DiscordControllerTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function fakeOAuthRequests(array $user = [], array $guilds = [], array $guildInfo = []): void
+    public function fakeOAuthRequests(array $user = [], array $guilds = [], array $guildInfo = [], array $requests = []): Factory
     {
         Http::preventStrayRequests();
 
@@ -420,7 +445,9 @@ class DiscordControllerTest extends TestCase
             ];
         }
 
-        Http::fake([
+        $this->session(['state' => 'test_state']);
+
+        return Http::fake([
             'discord.com/api/oauth2/token' => Http::response([
                 'access_token' => '6qrZcUqja7812RVdnEKjpzOL4CvHBFG',
                 'token_type' => 'Bearer',
@@ -449,9 +476,25 @@ class DiscordControllerTest extends TestCase
                 'mute' => false,
                 ...$guildInfo,
             ]),
+            ...$requests,
         ]);
 
-        $this->session(['state' => 'test_state']);
+    }
+
+    public static function provideErrorRoutes(): iterable
+    {
+        yield [
+            'discord.com/api/oauth2/token',
+        ];
+        yield [
+            'discord.com/api/users/@me/guilds/*/member',
+        ];
+        yield [
+            'discord.com/api/users/@me/guilds',
+        ];
+        yield [
+            'discord.com/api/users/@me',
+        ];
 
     }
 }
