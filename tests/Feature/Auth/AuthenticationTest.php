@@ -3,6 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Models\DiscordUser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -10,6 +11,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 #[CoversClass(AuthenticatedSessionController::class)]
+#[CoversClass(LoginRequest::class)]
 class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
