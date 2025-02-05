@@ -18,6 +18,8 @@ enum PermissionEnum: string
 
     case VIEWPWMEMBERREPORT = 'view-pw-member-report';
 
+    case ADMINISTERDISCORD = 'administer-discord';
+
     public function label(): string
     {
         return match ($this) {
@@ -32,6 +34,7 @@ enum PermissionEnum: string
             self::CREATEMEMBER => 'Create Member',
             self::VIEWPWMEMBERREPORT => 'View PW User Member Report',
             self::CHANGEMEMBERSHIPTYPE => 'Change Membership Type',
+            self::ADMINISTERDISCORD => 'Administer Discord',
         };
     }
 }

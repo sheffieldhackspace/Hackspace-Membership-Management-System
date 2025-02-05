@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Http\Controllers\Auth\DiscordController;
+use App\Http\Controllers\Auth\DiscordAuthController;
 use App\Models\DiscordUser;
 use App\Models\EmailAddress;
 use App\Models\Member;
@@ -20,13 +20,13 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
-#[CoversClass(DiscordController::class)]
+#[CoversClass(DiscordAuthController::class)]
 #[CoversClass(DiscordProvider::class)]
 #[CoversClass(DiscordService::class)]
 #[CoversClass(DiscordServiceProvider::class)]
 #[CoversClass(DiscordUser::class)]
 #[CoversClass(SocialiteDiscordUser::class)]
-class DiscordControllerTest extends TestCase
+class DiscordAuthControllerTest extends TestCase
 {
     use RefreshDatabase;
     use WithFaker;
