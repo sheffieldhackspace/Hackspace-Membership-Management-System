@@ -40,11 +40,6 @@ class SocialiteDiscordUser extends SocialiteUser
             fn ($userGuild) => $userGuild['id'] === $guild);
     }
 
-    public function saveToSession(): void
-    {
-        session(['discord_user_token' => $this->token]);
-    }
-
     /**
      * @throws DiscordAuthenticationException
      */
@@ -66,21 +61,5 @@ class SocialiteDiscordUser extends SocialiteUser
         $this->avatar_hash = $member['avatar'] ?? $this->avatar_hash;
         $this->avatar = $member['avatar'] ? sprintf('https://cdn.discordapp.com/avatars/%s/%s.png', $this->id, $member['avatar']) : $this->avatar;
         $this->roles = $member['roles'] ?? [];
-    }
-
-    public static function getFromSession(): ?SocialiteDiscordUser
-    {
-        $token = session('discord_user_token');
-        if ($token === null) {
-            return null;
-        }
-
-        /** @var DiscordProvider $driver */
-        $driver = Socialite::driver('discord-with-guilds');
-
-        /** @var SocialiteDiscordUser $user */
-        $user = $driver->userFromToken($token);
-
-        return $user;
     }
 }

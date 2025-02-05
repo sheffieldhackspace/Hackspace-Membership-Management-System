@@ -7,7 +7,6 @@ use App\Models\DiscordUser;
 use App\Models\EmailAddress;
 use App\Models\Member;
 use App\Models\User;
-use App\Policies\DiscordUserPolicy;
 use App\Providers\DiscordServiceProvider;
 use App\Services\Discord\DiscordProvider;
 use App\Services\Discord\DiscordService;
@@ -24,7 +23,6 @@ use Tests\TestCase;
 #[CoversClass(DiscordService::class)]
 #[CoversClass(DiscordServiceProvider::class)]
 #[CoversClass(DiscordUser::class)]
-#[CoversClass(DiscordUserPolicy::class)]
 #[CoversClass(SocialiteDiscordUser::class)]
 class DiscordControllerTest extends TestCase
 {
