@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Models\DiscordUser;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
-#[CoversClass(NewPasswordController::class)]
+#[CoversClass(PasswordResetLinkController::class)]
 class PasswordResetTest extends TestCase
 {
     use RefreshDatabase;

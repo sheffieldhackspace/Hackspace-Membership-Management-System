@@ -7,6 +7,7 @@ use App\Models\DiscordUser;
 use App\Models\EmailAddress;
 use App\Models\Member;
 use App\Models\User;
+use App\Policies\DiscordUserPolicy;
 use App\Providers\DiscordServiceProvider;
 use App\Services\Discord\DiscordProvider;
 use App\Services\Discord\DiscordService;
@@ -18,11 +19,13 @@ use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
-#[CoversClass(DiscordController::class)]
-#[CoversClass(DiscordServiceProvider::class)]
-#[CoversClass(DiscordProvider::class)]
 #[CoversClass(SocialiteDiscordUser::class)]
+#[CoversClass(DiscordController::class)]
+#[CoversClass(DiscordProvider::class)]
 #[CoversClass(DiscordService::class)]
+#[CoversClass(DiscordServiceProvider::class)]
+#[CoversClass(DiscordUser::class)]
+#[CoversClass(DiscordUserPolicy::class)]
 class DiscordControllerTest extends TestCase
 {
     use RefreshDatabase;

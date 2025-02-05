@@ -4,6 +4,7 @@ namespace App\Services\Discord;
 
 use App\Exceptions\GuildRequiredException;
 use Illuminate\Http\RedirectResponse;
+use PHPUnit\Framework\Attributes\CodeCoverageIgnore;
 
 /**
  * Copied from martinbean/socialite-discord-provider when the DiscordProvider was. Presently unused.
@@ -11,6 +12,9 @@ use Illuminate\Http\RedirectResponse;
  * @see https://github.com/martinbean/socialite-discord-provider Origial package this was based on
  * @see https://discord.com/developers/docs/topics/oauth2#authorization-url Discord OAuth2 documentation
  */
+
+// TODO remove this coverage ignore when this class is used
+#[CodeCoverageIgnore]
 class BotRedirectBuilder
 {
     /**

@@ -75,10 +75,10 @@
             "phpstan analyse --memory-limit=2G --configuration=phpstan.neon"
         ],
         "lint": [
-            "@php vendor/bin/pint --test"
+            "@php vendor/bin/pint --test --config ./pint.json"
         ],
         "lint:fix": [
-            "@php vendor/bin/pint"
+            "@php vendor/bin/pint --config ./pint.json"
         ],
         "coverage": [
             "php artisan test --coverage-html coverage"
