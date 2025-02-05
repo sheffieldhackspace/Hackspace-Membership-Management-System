@@ -1,6 +1,8 @@
 {
     "preset": "laravel",
     "rules": {
-        "ordered_attributes": true
+        "ordered_attributes": {
+            "sort_algorithm": "alpha"
+        }
     }
 }

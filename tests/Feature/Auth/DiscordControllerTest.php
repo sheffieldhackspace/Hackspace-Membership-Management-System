@@ -19,13 +19,13 @@ use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
-#[CoversClass(SocialiteDiscordUser::class)]
 #[CoversClass(DiscordController::class)]
 #[CoversClass(DiscordProvider::class)]
 #[CoversClass(DiscordService::class)]
 #[CoversClass(DiscordServiceProvider::class)]
 #[CoversClass(DiscordUser::class)]
 #[CoversClass(DiscordUserPolicy::class)]
+#[CoversClass(SocialiteDiscordUser::class)]
 class DiscordControllerTest extends TestCase
 {
     use RefreshDatabase;
