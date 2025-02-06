@@ -4,6 +4,7 @@ namespace Tests\Unit\Services\Discord;
 
 use App\DiscordData\GuildMemberData;
 use App\Exceptions\DiscordAPIException;
+use App\Models\DiscordUser;
 use App\Services\Discord\DiscordService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -12,6 +13,7 @@ use Tests\TestCase;
 use Tests\WithFakeDiscordApi;
 
 #[CoversClass(DiscordService::class)]
+#[CoversClass(GuildMemberData::class)]
 class DiscordServiceTest extends TestCase
 {
     use RefreshDatabase;
@@ -43,8 +45,38 @@ class DiscordServiceTest extends TestCase
         $discordService->getMembersOfGuild()->all();
     }
 
-    public function test_update_or_create_user_from_guild_member()
+    public function test_update_or_create_user_from_guild_member_creates_new_record()
     {
+        $discordService = new DiscordService;
+
+        $guildMemberData = new GuildMemberData(
+            discord_id: '123',
+            username: 'testuser',
+            nickname: 'testnick',
+            avatar_hash: 'avatarhash',
+            bot: false
+        );
+
+        $discordService->updateOrCreateUserFromGuildMember($guildMemberData);
+
+        $this->assertDatabaseHas('discord_users', [
+            'discord_id' => '123',
+            'username' => 'testuser',
+            'nickname' => 'testnick',
+            'avatar_hash' => 'avatarhash',
+        ]);
+    }
+
+    public function test_update_or_create_user_from_guild_member_updates_existing_record()
+    {
+        DiscordUser::factory()->create([
+            'discord_id' => '123',
+            'username' => 'olduser',
+            'nickname' => 'oldnick',
+            'avatar_hash' => 'oldhash',
+
+        ]);
+
         $discordService = new DiscordService;
 
         $guildMemberData = new GuildMemberData(
