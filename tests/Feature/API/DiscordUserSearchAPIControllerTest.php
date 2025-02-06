@@ -2,14 +2,19 @@
 
 namespace Tests\Feature\API;
 
+use App\Http\Controllers\API\DiscordUserSearchAPIController;
 use App\Models\DiscordUser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
+#[CoversClass(DiscordUserSearchAPIController::class)]
 class DiscordUserSearchAPIControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    private User $adminUser;
 
     protected function setUp(): void
     {
