@@ -2,16 +2,17 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\PutDiscordMembersJob;
 use Illuminate\Console\Command;
 
-class GetDiscordMembers extends Command
+class PutDiscordMembersCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:get-discord-members';
+    protected $signature = 'app:put-discord-members';
 
     /**
      * The console command description.
@@ -23,8 +24,10 @@ class GetDiscordMembers extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
-        //
+        dispatch(new PutDiscordMembersJob);
+
+        return 0;
     }
 }
