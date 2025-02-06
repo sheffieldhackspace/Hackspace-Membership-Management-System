@@ -3,7 +3,7 @@
 use App\Enums\PermissionEnum;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Members;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\User\UserController;
 use App\Models\Member;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;

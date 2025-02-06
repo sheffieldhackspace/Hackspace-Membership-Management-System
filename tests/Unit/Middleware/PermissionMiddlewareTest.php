@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Middleware;
+namespace Tests\Unit\Middleware;
 
 use App\Enums\MembershipType;
 use App\Http\Middleware\PermissionMiddleware;
@@ -21,7 +21,6 @@ class PermissionMiddlewareTest extends TestCase
     {
         parent::setUp();
 
-        // Define a test route that uses the RoleMiddleware
         Route::middleware(['permission:view-pw-member-report|create-member'])->get('/test-role-middleware-multi-permission', function () {
             return response()->json(['message' => 'Access granted']);
         });
