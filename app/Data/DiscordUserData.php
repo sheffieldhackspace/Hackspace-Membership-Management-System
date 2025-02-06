@@ -11,6 +11,7 @@ class DiscordUserData extends Data
         public string $id,
         public string $discord_id,
         public string $username,
+        public string $nickname,
         public bool $verified,
         public ?string $avatar,
     ) {}
@@ -21,8 +22,9 @@ class DiscordUserData extends Data
             id: $discordUser->id,
             discord_id: $discordUser->discord_id,
             username: $discordUser->username,
+            nickname: $discordUser->nickname,
             verified: $discordUser->verified,
-            avatar: null,
+            avatar: $discordUser->getAvatar(),
         );
     }
 }
