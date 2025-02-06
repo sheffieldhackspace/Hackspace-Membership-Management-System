@@ -3,13 +3,16 @@
 namespace Tests\Feature\Middleware;
 
 use App\Enums\MembershipType;
+use App\Http\Middleware\PermissionMiddleware;
 use App\Models\Member;
 use App\Models\MembershipHistory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
+#[CoversClass(PermissionMiddleware::class)]
 class PermissionMiddlewareTest extends TestCase
 {
     use RefreshDatabase;

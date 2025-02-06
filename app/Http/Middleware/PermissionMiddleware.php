@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Member;
 use App\Models\User;
 use Closure;
 use Illuminate\Support\Facades\Auth;
@@ -27,19 +26,11 @@ class PermissionMiddleware
             throw UnauthorizedException::notLoggedIn();
         }
 
-        if (! method_exists($user, 'hasAnyPermission')) {
-            throw UnauthorizedException::missingTraitHasRoles($user);
-        }
-
         $permissions = is_array($permission)
             ? $permission
             : explode('|', $permission);
 
-        $members = $user->members->filter(function (Member $member) use ($permissions) {
-            return $member->hasAnyPermission($permissions);
-        });
-
-        if (! $user->hasAnyPermission($permissions) && $members->isEmpty()) {
+        if (! $user->checkPermissions($permissions)) {
             throw UnauthorizedException::forPermissions($permissions);
         }
 

@@ -74,6 +74,9 @@
         "stan": [
             "phpstan analyse --memory-limit=2G --configuration=phpstan.neon"
         ],
+        "stan:baseline": [
+            "phpstan analyse --memory-limit=2G --configuration=phpstan.neon --generate-baseline"
+        ],
         "lint": [
             "@php vendor/bin/pint --test --config ./pint.json"
         ],
