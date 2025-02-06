@@ -22,18 +22,34 @@ class PermissionMiddlewareTest extends TestCase
         parent::setUp();
 
         // Define a test route that uses the RoleMiddleware
-        Route::middleware(['permission:view-pw-member-report|create-member'])->get('/test-role-middleware', function () {
+        Route::middleware(['permission:view-pw-member-report|create-member'])->get('/test-role-middleware-multi-permission', function () {
+            return response()->json(['message' => 'Access granted']);
+        });
+
+        Route::middleware(['permission:view-pw-member-report'])->get('/test-role-middleware-single-permission', function () {
             return response()->json(['message' => 'Access granted']);
         });
     }
 
-    public function test_user_with_required_role_on_user_can_access_route(): void
+    public function test_user_with_required_role_on_user_can_access_route_with_multiple_permissions(): void
     {
         $user = User::factory()->create();
         $user->assignRole('pw-user');
         $this->actingAs($user);
 
-        $response = $this->get('/test-role-middleware');
+        $response = $this->get('/test-role-middleware-multi-permission');
+
+        $response->assertStatus(200);
+        $response->assertJson(['message' => 'Access granted']);
+    }
+
+    public function test_user_with_required_role_on_user_can_access_route_with_single_permissions(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole('pw-user');
+        $this->actingAs($user);
+
+        $response = $this->get('/test-role-middleware-single-permission');
 
         $response->assertStatus(200);
         $response->assertJson(['message' => 'Access granted']);
@@ -53,7 +69,7 @@ class PermissionMiddlewareTest extends TestCase
             )->create();
         $this->actingAs($user);
 
-        $response = $this->get('/test-role-middleware');
+        $response = $this->get('/test-role-middleware-multi-permission');
 
         $response->assertStatus(200);
         $response->assertJson(['message' => 'Access granted']);
@@ -72,14 +88,14 @@ class PermissionMiddlewareTest extends TestCase
             )->create();
         $this->actingAs($user);
 
-        $response = $this->get('/test-role-middleware');
+        $response = $this->get('/test-role-middleware-multi-permission');
 
         $response->assertStatus(403);
     }
 
     public function test_unauthenticated_user_cannot_access_route(): void
     {
-        $response = $this->get('/test-role-middleware');
+        $response = $this->get('/test-role-middleware-multi-permission');
 
         $response->assertStatus(403);
     }
