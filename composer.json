@@ -14,10 +14,13 @@
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
+        "louisemcmahon/pawl": "^0.4.1",
+        "louisemcmahon/rfc6455": "^0.3.1",
         "spatie/laravel-data": "^4.11",
         "spatie/laravel-model-states": "^2.10",
         "spatie/laravel-permission": "^6.10",
         "spatie/laravel-typescript-transformer": "^2.5",
+        "team-reflex/discord-php": "^10.3",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
