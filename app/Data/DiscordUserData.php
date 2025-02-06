@@ -24,7 +24,7 @@ class DiscordUserData extends Data
             username: $discordUser->username,
             nickname: $discordUser->nickname,
             verified: $discordUser->verified,
-            avatar: $discordUser->getAvatar(),
+            avatar: $discordUser->avatar_hash ? $discordUser->getAvatar() : null,
         );
     }
 }

@@ -64,7 +64,7 @@ php artisan ziggy:generate
 
 #### Adding Models
 
-If you make changes to models or add new DTOs you will need to run `php artian typescript:transform` to update the
+If you make changes to models or add new DTOs you will need to run `php artisan typescript:transform` to update the
 typescript interfaces.
 
 You should also run `php artisan ide-helper:models -RW` to update the phpdoc blocks in the models.

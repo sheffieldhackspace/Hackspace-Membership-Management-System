@@ -26,6 +26,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read \App\Models\DiscordUser|null $discordUser
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EmailAddress> $emailAddresses
  * @property-read int|null $email_addresses_count
+ * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \App\Models\MembershipHistory|null $latestMembershipHistory
  * @property-read \App\Models\TrusteeHistory|null $latestTrusteeHistory
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MembershipHistory> $membershipHistory
