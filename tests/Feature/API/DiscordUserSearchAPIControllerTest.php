@@ -3,6 +3,7 @@
 namespace Tests\Feature\API;
 
 use App\Http\Controllers\API\DiscordUserSearchAPIController;
+use App\Http\Requests\DiscordUsers\DiscordUserSearchRequest;
 use App\Models\DiscordUser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -10,6 +11,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 #[CoversClass(DiscordUserSearchAPIController::class)]
+#[CoversClass(DiscordUserSearchRequest::class)]
 class DiscordUserSearchAPIControllerTest extends TestCase
 {
     use RefreshDatabase;
