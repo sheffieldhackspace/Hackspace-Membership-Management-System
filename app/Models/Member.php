@@ -16,6 +16,8 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
+ * 
+ *
  * @property string $id
  * @property string|null $user_id
  * @property string $name
@@ -43,7 +45,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TrusteeHistory> $trusteeHistory
  * @property-read int|null $trustee_history_count
  * @property-read \App\Models\User|null $user
- *
  * @method static \Database\Factories\MemberFactory factory($count = null, $state = [])
  * @method static Builder<static>|Member hasActiveMembership()
  * @method static Builder<static>|Member isTrustee()
@@ -65,7 +66,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder<static>|Member withoutPermission($permissions)
  * @method static Builder<static>|Member withoutRole($roles, $guard = null)
  * @method static Builder<static>|Member withoutTrashed()
- *
  * @mixin \Eloquent
  */
 class Member extends Model

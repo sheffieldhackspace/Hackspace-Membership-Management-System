@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
+ * 
+ *
  * @property string $id
  * @property string $member_id
  * @property \Illuminate\Support\Carbon|null $elected_at
@@ -18,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \App\Models\Member $member
- *
  * @method static \Database\Factories\TrusteeHistoryFactory factory($count = null, $state = [])
  * @method static Builder<static>|TrusteeHistory isTrustee()
  * @method static Builder<static>|TrusteeHistory newModelQuery()
@@ -30,7 +31,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|TrusteeHistory whereMemberId($value)
  * @method static Builder<static>|TrusteeHistory whereResignedAt($value)
  * @method static Builder<static>|TrusteeHistory whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class TrusteeHistory extends Model

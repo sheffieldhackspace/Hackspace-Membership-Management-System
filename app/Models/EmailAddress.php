@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
+ * 
+ *
  * @property string $id
  * @property string $member_id
  * @property string $email_address
@@ -20,7 +22,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \App\Models\Member $member
- *
  * @method static \Database\Factories\EmailAddressFactory factory($count = null, $state = [])
  * @method static Builder<static>|EmailAddress isPrimary()
  * @method static Builder<static>|EmailAddress newModelQuery()
@@ -37,7 +38,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static Builder<static>|EmailAddress whereVerifiedAt($value)
  * @method static Builder<static>|EmailAddress withTrashed()
  * @method static Builder<static>|EmailAddress withoutTrashed()
- *
  * @mixin \Eloquent
  */
 class EmailAddress extends Model
