@@ -6,6 +6,7 @@ use App\Enums\MembershipType;
 use App\Models\DiscordUser;
 use App\Models\Member;
 use App\Models\MembershipHistory;
+use App\Models\PostalAddress;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -20,7 +21,10 @@ class MemberShowControllerTest extends TestCase
     {
         $this->asAdminUser();
 
-        $member = Member::factory()->create();
+        $member = Member::factory()
+            ->isKeyholder()
+            ->has(PostalAddress::factory())
+            ->create();
 
         $response = $this->get(route('member.show', [$member->id]));
 
@@ -29,6 +33,25 @@ class MemberShowControllerTest extends TestCase
             ->component('Members/Show')
             ->where('member.id', $member->id)
             ->where('member.name', $member->name)
+            ->where('member.knownAs', $member->known_as)
+            ->where('member.membershipType.label', $member->getMembershipType()->label())
+            ->where('member.membershipType.value', $member->getMembershipType()->value)
+            ->where('member.hasActiveMembership', $member->getHasActiveMembership())
+            ->where('member.joiningDate', $member->getJoiningDate()->toDateString())
+            ->has('member.emailAddresses', 1)
+            ->where('member.emailAddresses.0.emailAddress', $member->emailAddresses->first()->email_address)
+            ->has('member.postalAddress', fn ($postalAddress) => $postalAddress
+                ->where('id', $member->postalAddress->id)
+                ->where('memberId', $member->id)
+                ->where('line1', $member->postalAddress->line_1)
+                ->where('line2', $member->postalAddress->line_2)
+                ->where('line3', $member->postalAddress->line_3)
+                ->where('city', $member->postalAddress->city)
+                ->where('county', $member->postalAddress->county)
+                ->where('postcode', $member->postalAddress->postcode)
+            )
+            ->where('member.trusteeHistory', [])
+            ->has('member.membershipHistory', 2)
         );
     }
 
