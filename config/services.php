@@ -42,6 +42,7 @@ return [
         'guild_id' => env('DISCORD_GUILD_ID'),
         'api_url' => env('DISCORD_API_URL', 'https://discord.com/api/v10'),
         'bot_token' => env('DISCORD_BOT_TOKEN'),
+        'fake_avatars' => env('APP_ENV', 'production') === 'production' ? false : env('DISCORD_FAKE_AVATARS', true),
     ],
 
 ];
