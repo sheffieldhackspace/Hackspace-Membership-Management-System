@@ -15,6 +15,8 @@ use Illuminate\Support\Collection;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
+ * 
+ *
  * @property string $id
  * @property string|null $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
@@ -32,7 +34,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
  * @property-read int|null $roles_count
- *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static Builder<static>|User newModelQuery()
  * @method static Builder<static>|User newQuery()
@@ -48,7 +49,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder<static>|User whereUpdatedAt($value)
  * @method static Builder<static>|User withoutPermission($permissions)
  * @method static Builder<static>|User withoutRole($roles, $guard = null)
- *
  * @mixin \Eloquent
  */
 class User extends Authenticatable

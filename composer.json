@@ -29,7 +29,7 @@
         "brainbits/phpstan-rules": "^4.0",
         "brianium/paratest": "^7.7",
         "fakerphp/faker": "^1.23",
-        "larastan/larastan": "3.0",
+        "larastan/larastan": "^3.0",
         "laravel/breeze": "^2.3",
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.20",
