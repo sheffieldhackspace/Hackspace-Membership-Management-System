@@ -24,6 +24,7 @@ class MemberData extends Data
         public PostalAddressData|Lazy $postalAddress,
         public array|Lazy $trusteeHistory,
         public array|Lazy $membershipHistory,
+        public DiscordUserData|Lazy|null $discordUser,
     ) {}
 
     public static function fromModel(Member $member): self
@@ -54,6 +55,11 @@ class MemberData extends Data
                 'membershipHistory',
                 $member,
                 fn () => $member->membershipHistory->map(fn ($membershipHistory) => MembershipHistoryData::fromModel($membershipHistory))
+            ),
+            discordUser: Lazy::whenLoaded(
+                'discordUser',
+                $member,
+                fn () => $member->discordUser ? DiscordUserData::fromModel($member->discordUser) : null
             ),
         );
     }

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Members;
 
 use App\Enums\MembershipType;
+use App\Models\DiscordUser;
 use App\Models\Member;
 use App\Models\MembershipHistory;
 use App\Models\User;
@@ -21,13 +22,53 @@ class MemberShowControllerTest extends TestCase
 
         $member = Member::factory()->create();
 
-        $response = $this->get("/member/{$member->id}");
+        $response = $this->get(route('member.show', [$member->id]));
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
             ->component('Members/Show')
             ->where('member.id', $member->id)
             ->where('member.name', $member->name)
+        );
+    }
+
+    public function test_it_shows_discord_user_if_has_one(): void
+    {
+        $this->asAdminUser();
+
+        $member = Member::factory()
+            ->has(DiscordUser::factory())
+            ->create();
+
+        $response = $this->get(route('member.show', [$member->id]));
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Members/Show')
+            ->where('member.id', $member->id)
+            ->where('member.name', $member->name)
+            ->has('member.discordUser', fn ($discordUser) => $discordUser
+                ->where('id', $member->discordUser->id)
+                ->where('username', $member->discordUser->username)
+                ->etc()
+            )
+        );
+    }
+
+    public function test_it_shows_null_discord_user_if_does_not_have_one(): void
+    {
+        $this->asAdminUser();
+
+        $member = Member::factory()->create();
+
+        $response = $this->get(route('member.show', [$member->id]));
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Members/Show')
+            ->where('member.id', $member->id)
+            ->where('member.name', $member->name)
+            ->where('member.discordUser', null)
         );
     }
 
@@ -38,7 +79,7 @@ class MemberShowControllerTest extends TestCase
 
         $member = Member::factory()->create();
 
-        $response = $this->get("/member/{$member->id}");
+        $response = $this->get(route('member.show', [$member->id]));
 
         $response->assertStatus(403);
     }
@@ -52,7 +93,7 @@ class MemberShowControllerTest extends TestCase
             ->create(['user_id' => $user->id]);
         $this->actingAs($user);
 
-        $response = $this->get("/member/{$member->id}");
+        $response = $this->get(route('member.show', [$member->id]));
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
@@ -69,7 +110,7 @@ class MemberShowControllerTest extends TestCase
         /** @var Member $member */
         $member = Member::factory()->create();
 
-        $response = $this->get("/member/{$member->id}");
+        $response = $this->get(route('member.show', [$member->id]));
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
@@ -85,7 +126,7 @@ class MemberShowControllerTest extends TestCase
 
         $invalidUuid = 'invalid-uuid';
 
-        $response = $this->get("/member/{$invalidUuid}");
+        $response = $this->get(route('member.show', [$invalidUuid]));
 
         $response->assertStatus(404);
     }
