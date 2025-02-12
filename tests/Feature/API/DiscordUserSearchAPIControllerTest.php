@@ -26,7 +26,7 @@ class DiscordUserSearchAPIControllerTest extends TestCase
         $this->adminUser = User::factory()->isAdmin()->create();
     }
 
-    public function test_admin_can_search_discord_members_by_name()
+    public function test_admin_can_search_discord_users_by_name()
     {
         // Create some Discord members
         $user1 = DiscordUser::factory()->create([
@@ -64,7 +64,7 @@ class DiscordUserSearchAPIControllerTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_search_discord_members_returns_max_5_results_by_default()
+    public function test_admin_can_search_discord_users_returns_max_5_results_by_default()
     {
         // Create 6 Discord members with similar names
         for ($i = 1; $i <= 6; $i++) {
@@ -82,7 +82,7 @@ class DiscordUserSearchAPIControllerTest extends TestCase
         $response->assertJsonCount(5);
     }
 
-    public function test_admin_can_search_discord_members_returns_only_the_passed_limit_of_results()
+    public function test_admin_can_search_discord_users_returns_only_the_passed_limit_of_results()
     {
         // Create 6 Discord members with similar names
         for ($i = 1; $i <= 4; $i++) {
@@ -100,7 +100,7 @@ class DiscordUserSearchAPIControllerTest extends TestCase
         $response->assertJsonCount(3);
     }
 
-    public function test_admin_can_search_discord_members_by_nickname()
+    public function test_admin_can_search_discord_users_by_nickname()
     {
         // Create a Discord member
         $user = DiscordUser::factory()->create([
@@ -120,7 +120,7 @@ class DiscordUserSearchAPIControllerTest extends TestCase
         ]);
     }
 
-    public function test_non_admin_cannot_search_discord_members()
+    public function test_non_admin_cannot_search_discord_users()
     {
         // Create a non-admin user
         $user = User::factory()->create();
