@@ -7,7 +7,6 @@ includes:
     - vendor/brainbits/phpstan-rules/rules.neon
 
 parameters:
-    noEnvCallsOutsideOfConfig: true
 
     paths:
         - app/

@@ -16,6 +16,8 @@ enum PermissionEnum: string
     case CREATEMEMBER = 'create-member';
     case CHANGEMEMBERSHIPTYPE = 'change-membership-type';
 
+    case EDITDISCORDUSERS = 'edit-discord-users';
+
     case VIEWPWMEMBERREPORT = 'view-pw-member-report';
 
     case ADMINISTERDISCORD = 'administer-discord';
@@ -35,6 +37,7 @@ enum PermissionEnum: string
             self::VIEWPWMEMBERREPORT => 'View PW User Member Report',
             self::CHANGEMEMBERSHIPTYPE => 'Change Membership Type',
             self::ADMINISTERDISCORD => 'Administer Discord',
+            self::EDITDISCORDUSERS => 'Edit Discord Users',
         };
     }
 }

@@ -55,12 +55,12 @@ class DiscordUserSearchAPIControllerTest extends TestCase
         $response->assertJsonFragment([
             'username' => $user1->username,
             'nickname' => $user1->nickname,
-            'avatar' => $user1->getAvatar(),
+            'avatarUrl' => $user1->getAvatar(),
         ]);
         $response->assertJsonFragment([
             'username' => $user2->username,
             'nickname' => $user2->nickname,
-            'avatar' => $user2->getAvatar(),
+            'avatarUrl' => $user2->getAvatar(),
         ]);
     }
 
@@ -116,7 +116,7 @@ class DiscordUserSearchAPIControllerTest extends TestCase
         $response->assertJsonFragment([
             'username' => $user->username,
             'nickname' => $user->nickname,
-            'avatar' => $user->getAvatar(),
+            'avatarUrl' => $user->getAvatar(),
         ]);
     }
 

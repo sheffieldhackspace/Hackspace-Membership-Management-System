@@ -9,7 +9,7 @@ class GuildMemberData extends Data
     public function __construct(
         public string $discord_id,
         public string $username,
-        public ?string $nickname,
+        public string $nickname,
         public ?string $avatar_hash,
         public bool $bot,
     ) {}

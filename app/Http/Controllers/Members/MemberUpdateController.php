@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Members;
 use App\Enums\MembershipType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Members\MembersUpdateRequest;
+use App\Models\DiscordUser;
 use App\Models\Member;
-use App\Models\User;
 
 class MemberUpdateController extends Controller
 {
-    public function update(MembersUpdateRequest $request, Member $member, User $user)
+    public function update(MembersUpdateRequest $request, Member $member)
     {
-        $validated = $request->validated();
+        $user = $request->user();
+        $validated = $request->safe();
 
         $member->name = $validated['name'];
         $member->known_as = $validated['knownAs'];
@@ -51,12 +52,12 @@ class MemberUpdateController extends Controller
             );
         });
 
-        $membershipType = MembershipType::from($request->get('membershipType'));
+        $membershipType = MembershipType::from($request->input('membershipType'));
         if ($membershipType !== $member->getMembershipType()) {
             $member->setMembershipType($membershipType);
         }
 
-        $trusteeValue = $request->get('trustee');
+        $trusteeValue = $request->input('trustee');
         if ($trusteeValue !== $member->getIsActiveTrustee()) {
             if ($trusteeValue) {
                 $member->trusteeHistory()->create([
@@ -67,6 +68,15 @@ class MemberUpdateController extends Controller
                 $member->latestTrusteeHistory()->update([
                     'resigned_at' => now(),
                 ]);
+            }
+        }
+
+        if ($member->discordUser?->id !== $request->input('discordUserId') && $user->can('changeDiscordMember', $member)) {
+            if ($request->input('discordUserId') === null) {
+                $member->discordUser()->update(['member_id' => null]);
+            } else {
+                $discordUser = DiscordUser::find($request->input('discordUserId'));
+                $member->discordUser()->save($discordUser);
             }
         }
     }

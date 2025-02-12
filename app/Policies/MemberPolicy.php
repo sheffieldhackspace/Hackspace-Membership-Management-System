@@ -50,6 +50,11 @@ class MemberPolicy
         return $user->checkPermissions([PermissionEnum::CHANGEMEMBERSHIPTYPE]);
     }
 
+    public function changeDiscordMember(User $user, Member $member): bool
+    {
+        return $user->checkPermissions(PermissionEnum::EDITDISCORDUSERS);
+    }
+
     /**
      * Determine whether the user can delete the model.
      */
