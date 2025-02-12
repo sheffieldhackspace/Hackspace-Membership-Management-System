@@ -34,6 +34,7 @@ class MemberEditController extends Controller
             'postalAddress',
             'membershipHistory',
             'trusteeHistory',
+            'discordUser',
         ]);
 
         return Inertia::render('Members/Edit', [
