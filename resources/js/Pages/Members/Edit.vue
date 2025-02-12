@@ -13,7 +13,9 @@
                 class=""
                 @submit.prevent="updateMember"
             >
-                <div class="mt-10 grid gap-x-6 gap-y-8 grid-cols-3 md:grid-cols-6  bg-white p-4 shadow rounded-lg sm:p-8">
+                <div
+                    class="mt-10 grid gap-x-6 gap-y-8 grid-cols-3 md:grid-cols-6  bg-white p-4 shadow rounded-lg sm:p-8"
+                >
                     <div class="md:col-span-6 col-span-3 ">
                         <h3 class="text-l font-semibold leading-tight text-gray-800 mb-2">
                             Names
@@ -275,7 +277,9 @@
                     </template>
 
                     <div class="md:col-span-6 col-span-3 flex place-content-end content-center space-x-2">
-                        <a :href=" route('dashboard')"><SecondaryButton>Cancel</SecondaryButton></a>
+                        <a :href=" route('dashboard')">
+                            <SecondaryButton>Cancel</SecondaryButton>
+                        </a>
                         <PrimaryButton
                             type="submit"
                             @click="updateMember"
@@ -290,21 +294,21 @@
 </template>
 
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3';
+import {useForm} from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import MemberData = App.Data.MemberData;
 import MembershipTypeData = App.Data.MembershipTypeData;
-import { Head } from '@inertiajs/vue3';
-import InputLabel from '@/Components/InputLabel.vue';
-import TextInput from "@/Components/TextInput.vue";
-import Checkbox from "@/Components/Checkbox.vue";
-import SecondaryButton from "@/Components/SecondaryButton.vue";
-import DangerButton from "@/Components/DangerButton.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import InputError from "@/Components/InputError.vue";
+import {Head} from '@inertiajs/vue3';
+import InputLabel from '@/Components/Form/InputLabel.vue';
+import TextInput from "@/Components/Form/TextInput.vue";
+import Checkbox from "@/Components/Form/Checkbox.vue";
+import SecondaryButton from "@/Components/Buttons/SecondaryButton.vue";
+import DangerButton from "@/Components/Buttons/DangerButton.vue";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
+import InputError from "@/Components/Form/InputError.vue";
 
 
-const props = defineProps< {
+const props = defineProps<{
     member: MemberData
     membershipTypes: MembershipTypeData[]
     canChangeMembershipType: boolean

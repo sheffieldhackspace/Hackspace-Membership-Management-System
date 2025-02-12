@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import {ref} from 'vue';
+import ApplicationLogo from '@/Components/Logos/ApplicationLogo.vue';
+import Dropdown from '@/Components/Nav/Dropdown.vue';
+import DropdownLink from '@/Components/Nav/DropdownLink.vue';
+import NavLink from '@/Components/Nav/NavLink.vue';
+import ResponsiveNavLink from '@/Components/Nav/ResponsiveNavLink.vue';
 import {Link, usePage} from '@inertiajs/vue3';
 
 const user = usePage().props.auth.user;

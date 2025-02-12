@@ -122,8 +122,8 @@
 import MemberData = App.Data.MemberData;
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {Head, router} from "@inertiajs/vue3";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import SecondaryButton from "@/Components/SecondaryButton.vue";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
+import SecondaryButton from "@/Components/Buttons/SecondaryButton.vue";
 
 defineProps<{
     member: MemberData
