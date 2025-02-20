@@ -181,27 +181,18 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    members ||--o{ member_transactions: has
-    member_transactions {
-        uuid id PK
-        string member_id FK
-        string bank_transaction_id FK
-        datetime created_at
-        datetime updated_at
-    }
-    bank_transactions ||--|| member_transactions: has
+
     bank_transactions {
         uuid id PK
         string acc_num_sort_code_hash
         string description
     }
 
-    bank_transactions ||--|o transactions : transaction_reference
+    bank_transactions ||--|o transactions: bank_transaction_id
     members ||--o{ transactions : member_id
     transactions {
         int id PK
-        uuid transaction_reference FK
-        uuid transaction_type_id FK
+        uuid order_id FK
         uuid member_id FK
         float debit_amount
         float credit_amount
@@ -214,43 +205,21 @@ erDiagram
         string origination 
     }
 
-    %% this will store transaction types so 
-    %% that you can filter them as you like
-    transaction_type ||--|{transactions: transaction_type_id
-    transaction_type {
+    %% potentially, membership rates can be a purchased_products!
+    purchased_products {
         uuid id PK
+        uuid transaction_id FK
         string description
+        int purchased_products
+        float price
     }
 
-    %% this could maybe be a sku
-    material_transactions ||--|o transactions : transaction_reference
-    material_transactions {
-        uuid id PK
-        uuid material_id FK
-        string description
-        float mm2
-    }
-
-    material ||--|{ material_transactions: material_id
-    material {
-        uuid id PK
-        float cost_per_mm2
-        string description
-    }
-
-    general_transaction ||--|o transactions : transaction_reference
-    general_transaction {
-        uuid id PK
-        uuid sku_id FK
-        int count
-    }
-
-    %% potentially, membership rates can be a sku!
-    skus ||--|{ general_transaction : sku_id
-    skus {
+    transactions }|--|| purchased_products: transaction_id
+    products {
         uuid id PK
         string description
-        int stock
-        float cost
+        int purchased_products_id
+        float price
+        string category
     }
 ```
