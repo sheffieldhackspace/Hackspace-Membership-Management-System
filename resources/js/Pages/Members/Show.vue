@@ -121,7 +121,7 @@
 <script setup lang="ts">
 import MemberData = App.Data.MemberData;
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {Head, router} from "@inertiajs/vue3";
+import {Head} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton.vue";
 import SecondaryButton from "@/Components/Buttons/SecondaryButton.vue";
 

@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * 
- *
  * @property string $id
  * @property string $member_id
  * @property MembershipType $membership_type
@@ -20,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \App\Models\Member $member
+ *
  * @method static \Database\Factories\MembershipHistoryFactory factory($count = null, $state = [])
  * @method static Builder<static>|MembershipHistory isActive()
  * @method static Builder<static>|MembershipHistory newModelQuery()
@@ -30,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|MembershipHistory whereMemberId($value)
  * @method static Builder<static>|MembershipHistory whereMembershipType($value)
  * @method static Builder<static>|MembershipHistory whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class MembershipHistory extends Model

@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 
- *
  * @property string $id
  * @property string $member_id
  * @property string $line_1
@@ -25,6 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \App\Models\Member $member
+ *
  * @method static \Database\Factories\PostalAddressFactory factory($count = null, $state = [])
  * @method static Builder<static>|PostalAddress newModelQuery()
  * @method static Builder<static>|PostalAddress newQuery()
@@ -43,6 +42,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static Builder<static>|PostalAddress whereUpdatedAt($value)
  * @method static Builder<static>|PostalAddress withTrashed()
  * @method static Builder<static>|PostalAddress withoutTrashed()
+ *
  * @mixin \Eloquent
  */
 class PostalAddress extends Model

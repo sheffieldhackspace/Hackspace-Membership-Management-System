@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * 
- *
  * @property string $id
  * @property string $discord_id
  * @property string|null $user_id
@@ -24,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \App\Models\Member|null $member
  * @property-read \App\Models\User|null $user
+ *
  * @method static \Database\Factories\DiscordUserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DiscordUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DiscordUser newQuery()
@@ -38,6 +37,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DiscordUser whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DiscordUser whereUsername($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DiscordUser whereVerified($value)
+ *
  * @mixin \Eloquent
  */
 class DiscordUser extends Model
