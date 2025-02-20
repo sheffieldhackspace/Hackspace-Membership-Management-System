@@ -1,8 +1,10 @@
 # Database
 
-Bellow is the database schema for the Hackspace Membership Management System. This schema is designed to be used with a MySQL database.
+Bellow is the database schema for the Hackspace Membership Management System. This schema is designed to be used with a
+MySQL database.
 
 The databse also contains tables defined by laravel and some packages namely which are not shown here ie:
+
 - migrations
 - jobs
 - roles
@@ -10,7 +12,7 @@ The databse also contains tables defined by laravel and some packages namely whi
 
 ```mermaid
 erDiagram
-    users ||--o{ members : has
+    users ||--o{ members: has
     users {
         uuid id PK
         string email
@@ -29,7 +31,18 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    members ||--o{ membership_histories : has
+    users ||--o{ discordUsers: has
+    members ||--o{ discordUsers: has
+    discordUsers {
+        uuid id PK
+        string discord_id
+        string user_id FK
+        string member_id FK
+        string username
+        datetime created_at
+        datetime updated_at
+    }
+    members ||--o{ membership_histories: has
     membership_histories {
         uuid id PK
         string member_id FK
@@ -37,7 +50,7 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    members ||--o{ membership_rate_modifier : has
+    members ||--o{ membership_rate_modifier: has
     membership_rate_modifier {
         uuid id PK
         string member_id FK
@@ -55,7 +68,7 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    members ||--|{ email_addresses : has
+    members ||--|{ email_addresses: has
     email_addresses {
         uuid id PK
         string member_id FK
@@ -65,7 +78,7 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    members ||--|| postal_addresses : has
+    members ||--|| postal_addresses: has
     postal_addresses {
         uuid id PK
         string member_id FK
@@ -78,7 +91,7 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    members ||--o| access_control_items : has
+    members ||--o| access_control_items: has
     access_control_items {
         uuid id PK
         string member_id FK
@@ -89,7 +102,7 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    members ||--o{ bank_references : has
+    members ||--o{ bank_references: has
     bank_references {
         uuid id PK
         string member_id FK
@@ -99,18 +112,18 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    members ||--|| keyholder_applications : has
+    members ||--|| keyholder_applications: has
     keyholder_applications {
         uuid id PK
         string member_id FK
         uuid proposed_by_member_id FK
         uuid seconded_by_member_id FK
         boolean id_verified
-        boolean approved        
+        boolean approved
         datetime created_at
         datetime updated_at
     }
-    members ||--|{ trustee_histories : has
+    members ||--|{ trustee_histories: has
     trustee_histories {
         uuid id PK
         string member_id FK
@@ -128,8 +141,8 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    tools ||--o{ tool_trainers : has
-    tool_trainers ||--o{ members : has
+    tools ||--o{ tool_trainers: has
+    tool_trainers ||--o{ members: has
     tool_trainers {
         uuid id PK
         string tool_id FK
@@ -137,7 +150,7 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    tool_trainers ||--o{ training_sessions : has
+    tool_trainers ||--o{ training_sessions: has
     training_sessions {
         uuid id PK
         string tool_trainer_id FK
@@ -146,8 +159,8 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    training_sessions ||--o{ training_signups : has
-    training_signups ||--|{ members : has
+    training_sessions ||--o{ training_signups: has
+    training_signups ||--|{ members: has
     training_signups {
         uuid id PK
         string training_session_id FK
@@ -158,8 +171,8 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    members ||--|{ training_requests : has
-    training_requests ||--|{ tools : has
+    members ||--|{ training_requests: has
+    training_requests ||--|{ tools: has
     training_requests {
         uuid id PK
         string member_id FK
@@ -168,7 +181,15 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-
+    members ||--o{ member_transactions: has
+    member_transactions {
+        uuid id PK
+        string member_id FK
+        string bank_transaction_id FK
+        datetime created_at
+        datetime updated_at
+    }
+    bank_transactions ||--|| member_transactions: has
     bank_transactions {
         uuid id PK
         string acc_num_sort_code_hash
