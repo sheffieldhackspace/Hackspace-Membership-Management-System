@@ -23,6 +23,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\DiscordUser|null $discordUser
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EmailAddress> $emailAddresses
  * @property-read int|null $email_addresses_count
  * @property-read \App\Models\MembershipHistory|null $latestMembershipHistory
@@ -124,6 +125,11 @@ class Member extends Model
     public function postalAddress(): HasOne
     {
         return $this->hasOne(PostalAddress::class);
+    }
+
+    public function discordUser(): HasOne
+    {
+        return $this->hasOne(DiscordUser::class);
     }
 
     public function getHasActiveMembership(): bool
