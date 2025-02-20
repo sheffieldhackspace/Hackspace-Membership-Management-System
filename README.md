@@ -43,7 +43,7 @@ not using php and blade.
 
 ``` shell
 composer install
-npm install
+npm ci
 php artisan migrate --seed
 php artisan key:generate
 php artisan typescript:transform
