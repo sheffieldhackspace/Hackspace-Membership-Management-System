@@ -3,6 +3,7 @@
 namespace Tests\Feature\Members;
 
 use App\Enums\MembershipType;
+use App\Models\DiscordUser;
 use App\Models\EmailAddress;
 use App\Models\Member;
 use App\Models\PostalAddress;
@@ -289,6 +290,117 @@ class MemberUpdateControllerTest extends TestCase
         $response->assertSessionHasErrors('emailAddresses.0.emailAddress');
     }
 
+    #[DataProvider('provideMemberWithAndWithoutDiscordUser')]
+    public function test_admin_can_attach_and_update_a_discord_user_for_a_member(Closure $memberFunction): void
+    {
+        /** @var Member $member */
+        $member = $memberFunction();
+        $this->actingAs(User::factory()->isAdmin()->create());
+
+        $oldDiscordUser = $member->discordUser;
+        $newDiscordUser = DiscordUser::factory()->create();
+        $data = $this->getData($member,
+            [
+                'discordUserId' => $newDiscordUser->id,
+            ]);
+
+        $response = $this->patch(route('member.update', [$member->id]), $data);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('members', ['id' => $member->id]);
+        $this->assertDatabaseHas('discord_users', ['id' => $newDiscordUser->id, 'member_id' => $member->id]);
+        if ($oldDiscordUser) {
+            $this->assertDatabaseHas('discord_users', ['id' => $oldDiscordUser->id, 'member_id' => $member->id]);
+        }
+    }
+
+    #[DataProvider('provideMemberWithAndWithoutDiscordUser')]
+    public function test_member_cannot_attach_or_update_a_discord_user_for_themselves(Closure $memberFunction): void
+    {
+        /** @var Member $member */
+        $member = $memberFunction();
+        $member->user()->associate(User::factory()->create())->save();
+        $this->actingAs($member->user);
+
+        $oldDiscordUser = $member->discordUser;
+        $newDiscordUser = DiscordUser::factory()->create();
+        $data = $this->getData($member,
+            [
+                'discordUserId' => $newDiscordUser->id,
+            ]);
+
+        $response = $this->patch(route('member.update', [$member->id]), $data);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('members', ['id' => $member->id]);
+        if ($oldDiscordUser) {
+            $this->assertDatabaseHas('discord_users', ['id' => $oldDiscordUser->id, 'member_id' => $member->id]);
+        }
+        $this->assertDatabaseMissing('discord_users', ['id' => $newDiscordUser->id, 'member_id' => $member->id]);
+    }
+
+    #[DataProvider('provideMemberWithAndWithoutDiscordUser')]
+    public function test_admin_can_remove_a_discord_user_for_a_member(Closure $memberFunction): void
+    {
+        /** @var Member $member */
+        $member = $memberFunction();
+        $this->actingAs(User::factory()->isAdmin()->create());
+
+        $oldDiscordUser = $member->discordUser;
+        $data = $this->getData($member,
+            [
+                'discordUserId' => null,
+            ]);
+
+        $response = $this->patch(route('member.update', [$member->id]), $data);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('members', ['id' => $member->id]);
+        if ($oldDiscordUser) {
+            $this->assertDatabaseHas('discord_users', ['id' => $oldDiscordUser->id, 'member_id' => null]);
+        }
+    }
+
+    #[DataProvider('provideMemberWithAndWithoutDiscordUser')]
+    public function test_member_cannot_remove_a_discord_user_for_themselves(Closure $memberFunction): void
+    {
+        /** @var Member $member */
+        $member = $memberFunction();
+        $member->user()->associate(User::factory()->create())->save();
+        $this->actingAs($member->user);
+
+        $oldDiscordUser = $member->discordUser;
+        $data = $this->getData($member,
+            [
+                'discordUserId' => null,
+            ]);
+
+        $response = $this->patch(route('member.update', [$member->id]), $data);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('members', ['id' => $member->id]);
+        if ($oldDiscordUser) {
+            $this->assertDatabaseHas('discord_users', ['id' => $oldDiscordUser->id, 'member_id' => $member->id]);
+        }
+    }
+
+    public function test_handles_invalid_discord_id(): void
+    {
+        /** @var Member $member */
+        $member = Member::factory()->isMember()->create();
+        $this->actingAs(User::factory()->isAdmin()->create());
+
+        $data = $this->getData($member,
+            [
+                'discordUserId' => 'invalid-id',
+            ]);
+
+        $response = $this->patch(route('member.update', [$member->id]), $data);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('discordUserId');
+    }
+
     public function test_non_admin_and_non_associated_user_cannot_update_member(): void
     {
         $user = User::factory()->create();
@@ -530,6 +642,21 @@ class MemberUpdateControllerTest extends TestCase
         ];
     }
 
+    public static function provideMemberWithAndWithoutDiscordUser(): iterable
+    {
+        yield [
+            function (): Member {
+                return Member::factory()->isMember()->create();
+
+            },
+        ];
+        yield [
+            function (): Member {
+                return Member::factory()->has(DiscordUser::factory())->isMember()->create();
+            },
+        ];
+    }
+
     private function getData(Member $member, $data): array
     {
 
@@ -544,6 +671,7 @@ class MemberUpdateControllerTest extends TestCase
             })->toArray(),
             'membershipType' => $member->getMembershipType()->value,
             'trustee' => $member->getIsActiveTrustee(),
+            'discordUserId' => $member->discordUser?->id,
         ], $data);
     }
 }

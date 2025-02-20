@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\MembershipType;
+use App\Models\DiscordUser;
 use App\Models\EmailAddress;
 use App\Models\Member;
 use App\Models\PostalAddress;
@@ -29,6 +30,13 @@ class MemberSeeder extends Seeder
                 ->has(PostalAddress::factory())
                 ->has(EmailAddress::factory()->primary())
                 ->has(EmailAddress::factory()->count(rand(0, 2)))
+                ->afterCreating(function (Member $member) {
+                    if (rand(0, 1) === 1) {
+                        $member->discordUser()->save(DiscordUser::factory([
+                            'nickname' => $member->known_as,
+                        ])->create());
+                    }
+                })
                 ->create());
         }
 

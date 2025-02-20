@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\DiscordController;
+use App\Http\Controllers\Auth\DiscordAuthController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
@@ -29,10 +29,10 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 
-    Route::get('login/discord', [DiscordController::class, 'redirect'])
+    Route::get('login/discord', [DiscordAuthController::class, 'redirect'])
         ->name('discord.redirect');
 
-    Route::get('login/discord/callback', [DiscordController::class, 'callback'])
+    Route::get('login/discord/callback', [DiscordAuthController::class, 'callback'])
         ->name('discord.callback');
 });
 

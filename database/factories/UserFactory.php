@@ -59,6 +59,18 @@ class UserFactory extends Factory
         );
     }
 
+    public function isMember(): static
+    {
+        return $this->has(Member::factory([
+            'name' => 'User',
+            'known_as' => 'Member',
+        ])
+            ->has(MembershipHistory::factory([
+                'membership_type' => MembershipType::MEMBER,
+            ]))
+        );
+    }
+
     public function isPWUser(): static
     {
         return $this->afterCreating(fn (User $user) => $user->assignRole(RolesEnum::PWUSER)

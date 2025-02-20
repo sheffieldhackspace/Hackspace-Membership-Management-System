@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
 
-class DiscordController extends Controller
+class DiscordAuthController extends Controller
 {
     /**
      * Redirect the user to the Discord authentication page.

@@ -11,8 +11,9 @@ class DiscordUserData extends Data
         public string $id,
         public string $discord_id,
         public string $username,
+        public string $nickname,
         public bool $verified,
-        public ?string $avatar,
+        public ?string $avatarUrl,
     ) {}
 
     public static function fromModel(DiscordUser $discordUser): self
@@ -21,8 +22,9 @@ class DiscordUserData extends Data
             id: $discordUser->id,
             discord_id: $discordUser->discord_id,
             username: $discordUser->username,
+            nickname: $discordUser->nickname,
             verified: $discordUser->verified,
-            avatar: null,
+            avatarUrl: $discordUser->avatar_hash ? $discordUser->getAvatar() : null,
         );
     }
 }

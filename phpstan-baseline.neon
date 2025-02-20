@@ -5,3 +5,45 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Auth/VerifyEmailController.php
+
+		-
+			message: '#^PHPDoc tag @property\-read for property App\\Models\\DiscordUser\:\:\$use_factory contains unknown class App\\Models\\TFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/DiscordUser.php
+
+		-
+			message: '#^PHPDoc tag @property\-read for property App\\Models\\EmailAddress\:\:\$use_factory contains unknown class App\\Models\\TFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/EmailAddress.php
+
+		-
+			message: '#^PHPDoc tag @property\-read for property App\\Models\\Member\:\:\$use_factory contains unknown class App\\Models\\TFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^PHPDoc tag @property\-read for property App\\Models\\MembershipHistory\:\:\$use_factory contains unknown class App\\Models\\TFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/MembershipHistory.php
+
+		-
+			message: '#^PHPDoc tag @property\-read for property App\\Models\\PostalAddress\:\:\$use_factory contains unknown class App\\Models\\TFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/PostalAddress.php
+
+		-
+			message: '#^PHPDoc tag @property\-read for property App\\Models\\TrusteeHistory\:\:\$use_factory contains unknown class App\\Models\\TFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/TrusteeHistory.php
+
+		-
+			message: '#^PHPDoc tag @property\-read for property App\\Models\\User\:\:\$use_factory contains unknown class App\\Models\\TFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/User.php

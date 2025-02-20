@@ -27,14 +27,17 @@ The system will allow:
 
 ## Development
 
-The backend is built in Laravel 11 and uses a MySQL database we use the following packages:
+The backend is built in [Laravel 11](https://laravel.com/docs/11.x) and uses a MySQL database we use the following
+packages:
 
-* Laravel Pasport and socialite for authentication.
-* Spatie Permissions for role based access control.
-* Spatie typescript-transformer for typescript support.
+* [Laravel Passport](https://laravel.com/docs/11.x/passport) and socialite for authentication.
+* [Spatie Permissions](https://spatie.be/docs/laravel-permission/v6/introduction) for role based access control.
+* [Spatie typescript-transformer](https://spatie.be/docs/typescript-transformer/v2/introduction) for typescript support.
+* [Discord PHP](https://github.com/discord-php/DiscordPHP) for discord integration.
+* [Inertia](https://inertiajs.com/) for routing.
 
-The frontend is built in Vue.js 3 and uses inertia for routing. New front end components should be built in typescript
-not using php and blade.
+The frontend is built in Typescript with [Vue.js 3](https://vuejs.org/) for a framework
+and [Tailwind 3](https://v3.tailwindcss.com/docs/installation) for styling.
 
 ### Installation
 
@@ -64,7 +67,7 @@ php artisan ziggy:generate
 
 #### Adding Models
 
-If you make changes to models or add new DTOs you will need to run `php artian typescript:transform` to update the
+If you make changes to models or add new DTOs you will need to run `php artisan typescript:transform` to update the
 typescript interfaces.
 
 You should also run `php artisan ide-helper:models -RW` to update the phpdoc blocks in the models.

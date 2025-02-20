@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \App\Models\Member $member
  *
  * @method static \Database\Factories\PostalAddressFactory factory($count = null, $state = [])

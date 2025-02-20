@@ -43,19 +43,26 @@ class MembersUpdateRequest extends FormRequest
                 'required',
                 'boolean',
             ],
+            'discordUserId' => [
+                'present',
+                'nullable',
+                'string',
+                'exists:discord_users,id',
+                'max:255',
+            ],
         ];
     }
 
     protected function prepareForValidation(): void
     {
-        if (! $this->exists('postalAddress')) {
-            $this->merge([
-                'postalAddress.line1' => $this->get('postalAddress.line1', ''),
-                'postalAddress.line2' => $this->get('postalAddress.line2', ''),
-                'postalAddress.line3' => $this->get('postalAddress.line3', ''),
-                'postalAddress.city' => $this->get('postalAddress.city', ''),
-                'postalAddress.county' => $this->get('postalAddress.county', ''),
-                'postalAddress.postcode' => $this->get('postalAddress.postcode', ''),
+        if ($this->exists('postalAddress')) {
+            $this->mergeIfMissing([
+                'postalAddress.line1' => '',
+                'postalAddress.line2' => '',
+                'postalAddress.line3' => '',
+                'postalAddress.city' => '',
+                'postalAddress.county' => '',
+                'postalAddress.postcode' => '',
             ]);
         }
 

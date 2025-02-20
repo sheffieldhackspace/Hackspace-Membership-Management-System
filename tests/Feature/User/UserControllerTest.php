@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
-#[CoversClass(\App\Http\Controllers\UserController::class)]
+#[CoversClass(\App\Http\Controllers\User\UserController::class)]
 class UserControllerTest extends TestCase
 {
     use RefreshDatabase;

@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $avatar_hash
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \App\Models\Member|null $member
  * @property-read \App\Models\User|null $user
  *
@@ -69,6 +70,10 @@ class DiscordUser extends Model
 
     public function getAvatar(): string
     {
+        if (config('services.discord.fake_avatars')) {
+            return 'https://cdn.discordapp.com/embed/avatars/0.png';
+        }
+
         return sprintf('https://cdn.discordapp.com/avatars/%s/%s.png', $this->discord_id, $this->avatar_hash);
     }
 }

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 
-import Checkbox from '@/Components/Checkbox.vue';
+import Checkbox from '@/Components/Form/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/Form/InputError.vue';
+import InputLabel from '@/Components/Form/InputLabel.vue';
+import PrimaryButton from '@/Components/Buttons/PrimaryButton.vue';
+import TextInput from '@/Components/Form/TextInput.vue';
 import {Head, Link, useForm} from '@inertiajs/vue3';
-import SecondaryButton from "@/Components/SecondaryButton.vue";
-import DiscordLogo from "@/Components/DiscordLogo.vue";
+import SecondaryButton from "@/Components/Buttons/SecondaryButton.vue";
+import DiscordLogo from "@/Components/Logos/DiscordLogo.vue";
 import Alert from "@/Components/Alert.vue";
 import {ref} from "vue";
 

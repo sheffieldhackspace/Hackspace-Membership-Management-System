@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -26,6 +27,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read \App\Models\DiscordUser|null $discordUser
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EmailAddress> $emailAddresses
  * @property-read int|null $email_addresses_count
+ * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \App\Models\MembershipHistory|null $latestMembershipHistory
  * @property-read \App\Models\TrusteeHistory|null $latestTrusteeHistory
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MembershipHistory> $membershipHistory
@@ -107,9 +109,9 @@ class Member extends Model
         return $this->hasOne(TrusteeHistory::class)->latestOfMany();
     }
 
-    public function user(): HasOne
+    public function user(): BelongsTo
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function emailAddresses(): HasMany
@@ -179,7 +181,6 @@ class Member extends Model
 
     public function setMembershipType(MembershipType $membershipType): void
     {
-
         $this->membershipHistory()->create([
             'membership_type' => $membershipType->value,
         ]);
