@@ -181,24 +181,45 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    members ||--o{ member_transactions: has
-    member_transactions {
-        uuid id PK
-        string member_id FK
-        string bank_transaction_id FK
-        datetime created_at
-        datetime updated_at
-    }
-    bank_transactions ||--|| member_transactions: has
+
     bank_transactions {
         uuid id PK
-        float debit_amount
-        float credit_amount
         string acc_num_sort_code_hash
         string description
-        datetime date
-        string transaction_type
+    }
+
+    bank_transactions ||--|o transactions: bank_transaction_id
+    members ||--o{ transactions : member_id
+    transactions {
+        int id PK
+        uuid order_id FK
+        uuid member_id FK
+        float debit_amount
+        float credit_amount
         datetime created_at
         datetime updated_at
+
+        %% it might be a good idea to keep record of
+        %% why or from where the payment was made.
+        %% think something like "web ui", "automatic", etc...
+        string origination 
+    }
+
+    %% potentially, membership rates can be a purchased_products!
+    purchased_products {
+        uuid id PK
+        uuid transaction_id FK
+        string description
+        int purchased_products
+        float price
+    }
+
+    transactions }|--|| purchased_products: transaction_id
+    products {
+        uuid id PK
+        string description
+        int purchased_products_id
+        float price
+        string category
     }
 ```
